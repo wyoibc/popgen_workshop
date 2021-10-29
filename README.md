@@ -9,3 +9,8 @@ If you have any questions, email:
 - [Vikram Chhatre](mailto:vchhatre@uwyo.edu)
 
 - [Sean Harrington](mailto:sharrin2@uwyo.edu)
+
+
+## Workshop Website
+
+[**https://wyoibc.github.io/popgen_workshop**](https://wyoibc.github.io/popgen_workshop)

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2021-10-29" />
+  <title>Working with Teton Computing Environment</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Working with Teton Computing Environment</h1>
+<p class="date">October 29, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#teton-background-and-documentation">1. Teton Background and Documentation</a></p></li>
+<li><p><a href="#connecting-over-ssh">2. Connecting over SSH</a></p></li>
+<li><p><a href="#login-vs-compute-nodes">3. Login vs Compute Nodes</a></p></li>
+<li><p><a href="#module-system-on-teton">4. Module System on Teton</a></p></li>
+<li><p><a href="#submitting-and-monitoring-jobs">5. Submitting and Monitoring Jobs</a></p></li>
+<li><p><a href="#southpass-an-alternate-gateway">6. Southpass - An Alternate Gateway</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="teton-background-and-documentation">1. Teton Background and Documentation</h2>
+<p>Teton is a high performance computing cluster administered by UW’s <a href="https://uwyo.edu/arcc">Advanced Research Computing Center (ARCC)</a>. It has received investments from the University, entities such as <a href="https://uwyo.edu/wyominginbre">Wyoming INBRE</a>, <a href="https://uwyo.edu/epscor">Wyoming EPSCoR</a> and many individual research labs across the campus. It features a large number of compute nodes each consisting of upto 32 processing units. Some compute nodes consist of Graphical Processing Units (GPUs). Yet other nodes are very high capacity offering upto 1TB of random access memory suitable for jobs with very high memory requirement.</p>
+<p>ARCC administers these compute nodes using the <a href="https://slurm.schedmd.com/documentation.html">SLURM Scheduling System</a>. Because some nodes are a result of investments by entities on campus, they have priority access to those nodes. When jobs are submitted, SLURM schedules them in the order of priority for those nodes. Remaining nodes are available on first come first serve basis.</p>
+<p>Documentation for Teton is available in the form of a <a href="https://arccwiki.atlassian.net/wiki/spaces/DOCUMENTAT/pages/65933/Policies">Wiki</a>.</p>
+<p><br><br></p>
+<h2 id="connecting-over-ssh">2. Connecting Over SSH</h2>
+<p>Secure SHell (SSH) networking protocol provides functionality to connect a client (you) to the host (server). This protocol is administered through a terminal session. Most systems out there employ SSH keys (very long, encrypted passwords) in order to authenticate a client. Teton does not use SSH keys. It instead uses 2-factor authentication.</p>
+<p>The simplest way to connect to Teton over SSH is as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">ssh</span> USERNAME@teton.uwyo.edu</span></code></pre></div>
+<p>When the server receives this login request, it opens up the following display:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="ex">NOTICE</span> TO USERS</span>
+<span id="cb2-3"><a href="#cb2-3"></a>=============================================================================</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="ex">This</span> is a University of Wyoming computer system, which may be accessed and</span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="ex">used</span> only for authorized business by authorized personnel. Unauthorized</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="ex">access</span> or use of this computer system may subject violators to criminal,</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="ex">civil</span>, and/or administrative action. All information on this computer</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="ex">system</span> may be intercepted, recorded, read, copied, and disclosed by and to</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="ex">authorized</span> personnel for any purpose. Access or use of this computer system</span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="ex">by</span> any person, whether authorized or unauthorized, constitutes consent to</span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="ex">these</span> terms. There is no right of privacy in this system. Discontinue access</span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="ex">immediately</span> if you do not agree with the conditions stated in this notice.</span>
+<span id="cb2-13"><a href="#cb2-13"></a>=============================================================================</span>
+<span id="cb2-14"><a href="#cb2-14"></a></span>
+<span id="cb2-15"><a href="#cb2-15"></a>                         <span class="ex">TWO-FACTOR</span> AUTHENTICATION</span>
+<span id="cb2-16"><a href="#cb2-16"></a>=============================================================================</span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="ex">This</span> system requires two-factor authentication.</span>
+<span id="cb2-18"><a href="#cb2-18"></a></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="ex">The</span> password requirement is your UWYO domain password.</span>
+<span id="cb2-20"><a href="#cb2-20"></a></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="ex">The</span> token can be generated by your registered YubiKey or manually input with</span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="ex">the</span> Duo mobile app. If you have questions about using this implementation of</span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="ex">two-factor</span> authentication, contact the ARCC team at arcc-help@uwyo.edu</span>
+<span id="cb2-24"><a href="#cb2-24"></a></span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="ex">Please</span> enter the two-factor password the in the form:</span>
+<span id="cb2-26"><a href="#cb2-26"></a></span>
+<span id="cb2-27"><a href="#cb2-27"></a>                            <span class="op">&lt;</span><span class="ex">password</span><span class="op">&gt;</span>,<span class="op">&lt;</span>token<span class="op">&gt;</span></span>
+<span id="cb2-28"><a href="#cb2-28"></a></span>
+<span id="cb2-29"><a href="#cb2-29"></a>=============================================================================</span></code></pre></div>
+<p>Enter your uwyo login password, a comma and the 2fa passcode from the DUO mobile app. Then hit ENTER.</p>
+<p>The system will log you in and present several pieces of information.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="ex">Last</span> login: Thu Oct 21 14:34:35 2021 from ondemand-prod-pub.arcc.uwyo.edu</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="ex">******************************************************************************</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>                      <span class="ex">________</span>      _____                </span>
+<span id="cb3-5"><a href="#cb3-5"></a>                      <span class="ex">___</span>  __/_____ __  /_______ _______ </span>
+<span id="cb3-6"><a href="#cb3-6"></a>                      <span class="ex">__</span>  /   _  _ \_  __/_  __ \__  __ \</span>
+<span id="cb3-7"><a href="#cb3-7"></a>                      _  /    /  __// /_  / /_/ /_  / / /</span>
+<span id="cb3-8"><a href="#cb3-8"></a>                      <span class="ex">/_/</span>     \___/ \__/  \____/ /_/ /_/ </span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="ex">******************************************************************************</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="ex">Maintenance</span> Scheduled:   Jan 5th, 2022 from 8am to 8pm</span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="ex">+----------------------------------------------------------------------------------+</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="kw">|</span>      <span class="ex">*arccquota</span> tool*       <span class="kw">|</span>          <span class="ex">Block</span>          <span class="kw">|</span>          <span class="ex">File</span>            <span class="kw">|</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="ex">+----------------------------------------------------------------------------------+</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="kw">|</span>            <span class="ex">Path</span>             <span class="kw">|</span>  <span class="ex">Used</span>      Limit      % <span class="kw">|</span>   <span class="ex">Used</span>      Limit      % <span class="kw">|</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="ex">+----------------------------------------------------------------------------------+</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="kw">|</span> <span class="ex">/home/popgen</span>                <span class="kw">|</span>   <span class="ex">3.47g</span>   25.00g  13.87 <span class="kw">|</span>    <span class="ex">43.2K</span>      0.0   0.00 <span class="kw">|</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="kw">|</span> <span class="ex">/gscratch/popgen</span>            <span class="kw">|</span>   <span class="ex">1.00t</span>    5.00t  20.00 <span class="kw">|</span>    <span class="ex">33.0K</span>      0.0   0.00 <span class="kw">|</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="ex">+----------------------------------------------------------------------------------+</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="kw">|</span> <span class="ex">/project/inbre-train</span>        <span class="kw">|</span>   <span class="ex">0.59t</span>    1.00t  58.76 <span class="kw">|</span>     <span class="ex">9.0K</span>      0.0   0.00 <span class="kw">|</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="kw">|</span>  <span class="kw">`</span><span class="ex">-</span> popgen                  <span class="kw">|</span>   <span class="ex">0.42t</span>    0.00k   0.00 <span class="kw">|</span>     <span class="ex">1.8K</span>      0.0   0.00 <span class="kw">|</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="ex">+----------------------------------------------------------------------------------+</span></span></code></pre></div>
+<p><br><br></p>
+<h3 id="quick-connect-using-shortcut">2.1 Quick Connect Using Shortcut</h3>
+<p>When you are working with Teton on a daily basis, it gets cumbersome to type out the entire login command every time. Use this simple shortcut to simplify your login.</p>
+<p>Open up the SSH configuration file on your local workstation:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="bu">cd</span> /Users/popgen/.ssh</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="ex">vim</span> config</span></code></pre></div>
+<p>Add following code to the file. Then save and close.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="ex">Host</span> teton</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="ex">User</span> YOUR_USERNAME</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="ex">Port</span> 22</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="ex">HostName</span> teton.uwyo.edu</span></code></pre></div>
+<p>Now simply type the following to start login process.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">ssh</span> teton</span></code></pre></div>
+<p><br><br></p>
+<h3 id="multiple-instances-with-single-login">2.2 Multiple Instances with Single Login</h3>
+<p>When working on Teton, you will often find yourself opening multiple terminal windows for multi-tasking. But using individual logins for each of these windows is quite inefficient and ARCC actually discourages it. Instead, you can piggyback multiple SSH instances on the original login. Here is how to do it. Reopen the ssh config file:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="bu">cd</span> /Users/popgen/.ssh</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="ex">vim</span> config</span></code></pre></div>
+<p>Add following code to the file:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="ex">Host</span> teton</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="ex">User</span> YOUR_USERNAME</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="ex">Port</span> 22</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="ex">HostName</span> teton.uwyo.edu</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="ex">ControlMaster</span> auto</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="ex">ControlPath</span> ~/.ssh/ssh-%r@%h:%p</span></code></pre></div>
+<p>Then open a new tab in your terminal and simply type <code>ssh teton</code>. You will not be asked to re-authenticate.</p>
+<p><br><br><br></p>
+<h2 id="login-vs-compute-nodes">3. Login vs Compute Nodes</h2>
+<p>When you login to teton, you always end up at a login node. For example:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2"></a>[<span class="ex">popgen@tlog1</span> ~]$</span></code></pre></div>
+<p><code>tlog1</code> is one of the login nodes. It’s mainly there as a landing placeholder and to perform light weight operations, such as copying files and folders or performing other housekeeping commands which won’t consume significant resources.</p>
+<p>As an example, checking things like job status, disk quota, available nodes are all valid examples. Running a R script that will take several minutes or hours to complete and is memory heavy is not. Do not attempt to run commands like that on login nodes.</p>
+<p>Compute nodes are the appropriate locations to run those commands and jobs where you can leverage necessary resources such as number of processors and amount of memory. We will look at the protocol to submit jobs using compute nodes in the following sections.</p>
+<p><br><br><br></p>
+<h2 id="module-system-on-teton">4. Module System on Teton</h2>
+<p>A module is simply a software which is available to all users of the Teton HPC. The advantage of having a module is that if the software has any dependencies, those have already been looked into and satisfied by ARCC. In contrast, if you run a software that is not yet available as module on Teton, you are responsible for satisfying its dependencies, which may not be a trivial task.</p>
+<p><br><br></p>
+<h3 id="how-to-find-a-module">4.1 How to Find a Module</h3>
+<p>ARCC provides a master command <code>module spider</code> for searching existing module database.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="ex">module</span> spider python</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="ex">---------------------------------------------------------------------------------------------------------------------------------</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>  <span class="ex">python</span>:</span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="ex">---------------------------------------------------------------------------------------------------------------------------------</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>     <span class="ex">Versions</span>:</span>
+<span id="cb10-8"><a href="#cb10-8"></a>        <span class="ex">python/2.7.5</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>        <span class="ex">python/2.7.14</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>        <span class="ex">python/2.7.15</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>        <span class="ex">python/3.4.0</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>        <span class="ex">python/3.6.3</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>        <span class="ex">python/3.7.6</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>        <span class="ex">python/3.8.7</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>     <span class="ex">Other</span> possible modules matches:</span>
+<span id="cb10-16"><a href="#cb10-16"></a>        <span class="ex">biopython</span>  py-biopython  python3-common</span></code></pre></div>
+<p>As you can see, there are multiple versions of Python available as independent modules. In order to find out what dependencies exist for a given version, you can search with the version number. For example:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">module</span> spider python/3.8.7</span>
+<span id="cb11-3"><a href="#cb11-3"></a></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="ex">---------------------------------------------------------------------------------------------------------------------------------</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>  <span class="ex">python</span>: python/3.8.7</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="ex">---------------------------------------------------------------------------------------------------------------------------------</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a></span>
+<span id="cb11-8"><a href="#cb11-8"></a>    <span class="ex">You</span> will need to load all module(s) <span class="ex">on</span> any one of the lines below before the <span class="st">&quot;python/3.8.7&quot;</span> module is available to load.</span>
+<span id="cb11-9"><a href="#cb11-9"></a></span>
+<span id="cb11-10"><a href="#cb11-10"></a>      <span class="ex">swset/2018.05</span>  gcc/7.3.0</span></code></pre></div>
+<p>Here, in order to load the module <code>python/3.8.7</code>, you also first need to load <code>swset</code> and <code>gcc</code> modules which are its dependencies. In fact, these two dependencies must be loaded for most modules to run on Teton.</p>
+<p><br><br></p>
+<h3 id="how-to-load-or-unload-a-module">4.2 How to Load or Unload a Module</h3>
+<p>It’s very simple.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="ex">module</span> load swset</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="ex">module</span> load gcc</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="ex">module</span> load python/3.8.7</span></code></pre></div>
+<p>How do we know that the modules were loaded in memory?</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="ex">module</span> list</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="ex">Currently</span> Loaded Modules:</span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="ex">1</span>) <span class="ex">slurm/20.11</span>       (S)   <span class="ex">5</span>) <span class="ex">gcc/7.3.0</span>       9) <span class="ex">zlib/1.2.11</span>    13) <span class="ex">gettext/0.20.1</span>  17) <span class="ex">gdbm/1.18.1</span>    21) <span class="ex">python/3.8.7</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  <span class="ex">2</span>) <span class="ex">arcc/0.1</span>          (S)   <span class="ex">6</span>) <span class="ex">ncurses/6.2</span>    10) <span class="ex">libxml2/2.9.9</span>  14) <span class="ex">readline/8.0</span>    18) <span class="ex">libbsd/0.10.0</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="ex">3</span>) <span class="ex">singularity/2.5.2</span>       7) <span class="ex">libiconv/1.16</span>  11) <span class="ex">bzip2/1.0.8</span>    15) <span class="ex">openssl/1.1.1e</span>  19) <span class="ex">expat/2.2.9</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a>  <span class="ex">4</span>) <span class="ex">swset/2018.05</span>           8) <span class="ex">xz/5.2.4</span>       12) <span class="ex">tar/1.32</span>       16) <span class="ex">sqlite/3.30.1</span>   20) <span class="ex">libffi/3.2.1</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a></span>
+<span id="cb13-10"><a href="#cb13-10"></a>  <span class="ex">Where</span>:</span>
+<span id="cb13-11"><a href="#cb13-11"></a>   <span class="ex">S</span>:  Module is Sticky, requires --force to unload or purge</span></code></pre></div>
+<p>The modules we loaded are number 4, 5 and 21. All other modules are usually loaded automatically when you first login to the system.</p>
+<p>Unloading is reverse of load. Just use the <code>unload</code> command.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">module</span> unload python</span></code></pre></div>
+<p>Remember that if you do not use the version number for a given module, the default version will be loaded.</p>
+<p><br><br><br></p>
+<h2 id="submitting-and-monitoring-jobs">5. Submitting and Monitoring Jobs</h2>
+<p>There are two ways to submit jobs to compute nodes on Teton.</p>
+<ul>
+<li><p>Interactive resources</p></li>
+<li><p>SLURM <code>sbatch</code> submission</p></li>
+</ul>
+<p>For both type of jobs, you will need to understand some basic parameters:</p>
+<p><br><br></p>
+<h3 id="job-submission-parameters">5.1 Job Submission Parameters</h3>
+<ul>
+<li><p><code>--time=</code> or <code>-t=</code>: To set up the amount of time you think the job will likely take. This is a hard time limit. Your job will be killed if it doesn’t finish in this time slot. Be judicious about choosing value of this parameter.</p></li>
+<li><p><code>--nodes=</code>: Number of compute nodes to engage</p></li>
+<li><p><code>--ntasks-per-node=</code>: Number of cores to engage from each of the selected compute nodes</p></li>
+<li><p><code>--mem=</code>: Amount of memory to be allocated to the job</p></li>
+<li><p><code>-J</code>: Name of the job. Only 8 characters allowed without any spaces.</p></li>
+<li><p><code>--account=</code>: Your project name. You must provide value for this parameter or you will not be able to submit jobs</p></li>
+<li><p><code>--mail-type=</code>: If you want email notifications about your job, set this parameter to <code>ALL</code>. Otherwise, set it to <code>NONE</code></p></li>
+<li><p><code>--mail-user=</code>: This parameter is only neended if you set the previous one to <code>ALL</code>. If you did, provide your complete email address.</p></li>
+</ul>
+<p><br><br></p>
+<h3 id="interactive-jobs">5.2 Interactive Jobs</h3>
+<p>SLURM scheduling system ships with a utility called <code>salloc</code> or <strong>s</strong>ecure <strong>alloc</strong>ation. This program allows you to request access to resources on the fly.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">salloc</span> --account=popgen --nodes=1 --ntasks-per-node=16 --mem=5G --time=1:00:00</span></code></pre></div>
+<p>This command is asking for allocation of 1 node, 16 cores, 5G of memory for one hour of time. Type this command in your terminal session. Then check what happens to your login prompt.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="ex">salloc</span>: Granted job allocation 15429924</span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a>[<span class="ex">popgen@m067</span>] ~$</span></code></pre></div>
+<p>Notice the name of the node: <code>m067</code>. That’s a compute node. The clock is ticking. Let’s try to run a simple job.</p>
+<ul>
+<li>Write a very short script in a file called <code>helpbwa.sh</code>. Contents of the script follow:</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="ex">module</span> load gcc</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="ex">module</span> lod swset</span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="ex">module</span> load bwa</span>
+<span id="cb17-5"><a href="#cb17-5"></a></span>
+<span id="cb17-6"><a href="#cb17-6"></a></span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="ex">module</span> list</span>
+<span id="cb17-8"><a href="#cb17-8"></a></span>
+<span id="cb17-9"><a href="#cb17-9"></a><span class="ex">bwa</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a></span>
+<span id="cb17-11"><a href="#cb17-11"></a><span class="bu">echo</span> <span class="st">&quot;This job finished at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+<ul>
+<li>Save and close the script, then invoke it using bash</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="fu">bash</span> helpbwa.sh</span></code></pre></div>
+<p>Now you know how interactive jobs run. One caveat with them is that SLURM will not generate a log file for these jobs. Log files can be quite useful in understanding why a job failed or when it did not do what you expected.</p>
+<p><br><br></p>
+<h3 id="slurm-sbatch-submission">5.3 SLURM <code>sbatch</code> Submission</h3>
+<p>This is the non-lazy way of running jobs. First write a script which includes various sbatch parameters as necessary:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="ex">vim</span> helpbwa2.sh</span>
+<span id="cb19-3"><a href="#cb19-3"></a></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="kw">```</span><span class="fu">bash</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a></span>
+<span id="cb19-6"><a href="#cb19-6"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co">#SBATCH -t 00:1:00</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="co">#SBATCH --ntasks-per-node=1</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="co">#SBATCH --mem=1G</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a><span class="co">#SBATCH -J help_bwa</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb19-13"><a href="#cb19-13"></a><span class="co">#SBATCH --account=popgen</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a></span>
+<span id="cb19-15"><a href="#cb19-15"></a></span>
+<span id="cb19-16"><a href="#cb19-16"></a><span class="ex">module</span> load gcc swset bwa</span>
+<span id="cb19-17"><a href="#cb19-17"></a></span>
+<span id="cb19-18"><a href="#cb19-18"></a><span class="bu">echo</span> <span class="st">&quot;Printing help menu for bwa&quot;</span></span>
+<span id="cb19-19"><a href="#cb19-19"></a><span class="ex">bwa</span></span>
+<span id="cb19-20"><a href="#cb19-20"></a></span>
+<span id="cb19-21"><a href="#cb19-21"></a><span class="bu">echo</span> <span class="st">&quot;Printing help menu for bwa aln algorithm&quot;</span></span>
+<span id="cb19-22"><a href="#cb19-22"></a><span class="ex">bwa</span> aln</span>
+<span id="cb19-23"><a href="#cb19-23"></a></span>
+<span id="cb19-24"><a href="#cb19-24"></a><span class="bu">echo</span> <span class="st">&quot;Printing help menu for bwa mem algorithm&quot;</span></span>
+<span id="cb19-25"><a href="#cb19-25"></a><span class="ex">bwa</span> mem</span>
+<span id="cb19-26"><a href="#cb19-26"></a></span>
+<span id="cb19-27"><a href="#cb19-27"></a></span>
+<span id="cb19-28"><a href="#cb19-28"></a><span class="bu">echo</span> <span class="st">&quot;This job finished at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+<p>Then submit the job as follows:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="ex">sbatch</span> helpbwa2.sh</span></code></pre></div>
+<p>You will notice that nothing is now printed to the screen. Instead, all the output goes to a log file that slurm generates. If you search in the current directory, you will find a file that ends in <code>.out</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">ls</span> -lh *.out</span>
+<span id="cb21-3"><a href="#cb21-3"></a></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="ex">-rw-rw-r--</span> 1 popgen popgen 6.1K Oct 28 15:02 slurm-15430128.out</span></code></pre></div>
+<p>Check the contents of the file:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1"></a></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="fu">cat</span> slurm-15430128.out</span></code></pre></div>
+<p><br><br></p>
+<h3 id="monitoring-the-jobs">5.4 Monitoring the Jobs</h3>
+<p>SLURM has another utility which makes monitoring jobs easier: <code>squeue</code>.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="ex">squeue</span> -u popgen</span>
+<span id="cb23-3"><a href="#cb23-3"></a></span>
+<span id="cb23-4"><a href="#cb23-4"></a>             <span class="ex">JOBID</span> PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)</span></code></pre></div>
+<p>Currently no jobs are running so nothing is listed here. But the job will show up whether it was submitted through sbatch or interactively using salloc.</p>
+<p>Sometimes, you want to check not just the status of the job but the output it is producing. You can run the following command on the <code>.out</code> file to get real time updates on it.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="fu">tail</span> -f slurm-15430128.out</span></code></pre></div>
+<p>If the job is running, you will see new output printed on the screen. Pressing <code>Ctrl+z</code> removes the tail command.</p>
+<p><br><br><br></p>
+<h2 id="southpass-an-alternate-gateway">6. Southpass An Alternate Gateway</h2>
+<p>Methods of interacting with Teton as presented above provide a powerful experience. However, not everyone is thrilled to be using commandline all of the time. ARCC is currently testing out a graphical interface for some of the Teton functionality through a system called SouthPass.</p>
+<p>Southpass can be accessed here: <a href="https://southpass.arcc.uwyo.edu"><strong>southpass.arcc.uwyo.edu</strong></a>.</p>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+</body>
+</html>
