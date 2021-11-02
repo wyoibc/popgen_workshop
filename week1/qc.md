@@ -173,7 +173,7 @@ create and open a new  file to run a slurm job (e.g., ``ruber_ref.slurm``). It s
 #SBATCH -t 2-00:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=10G
+#SBATCH --mem=16G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=*****YOUR_EMAIL*********
 #SBATCH -e ruber_%A_%a.err
