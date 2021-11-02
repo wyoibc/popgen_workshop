@@ -46,6 +46,8 @@ date: October 29, 2021
 
 ## 1. Introduction
 
+For most of the workshop, we'll be working with the same dataset. This is empirical double digest RADseq data ([Peterson et al. 2012](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0037135)) that I (Sean Harrington) generated as part of my PhD at San Diego State University. The data are for a species of rattlesnake, the red diamond rattlesnake (*Crotalus ruber*), that is distributed across the Baja California peninsula and into southern California. I was interested in identifying if there is any population structure in *C ruber* and inferring what population genetic and environmental forces have resulted in any existing structure. The data are single-end reads generated on an Illumina hiSeq. My analyses of these data are published in [Harrington et al. 2018](https://onlinelibrary.wiley.com/doi/full/10.1111/jbi.13114).
+
 [iPyRad](https://ipyrad.readthedocs.io/en/master/) is a flexible python-based pipeline for taking various types of restriction-site associated data, processing them, and generated aligned datasets.
 
 iPyRad is capable of generating datasets either by mapping your raw reads to a reference genome or using a de novo assembly method that does not require a reference. We will use the reference-based method today.
@@ -127,7 +129,6 @@ nano params-ruber_ref.txt  #if you prefer a different text editor to nano, use t
 
 
 We'll change a few of these:
-- ``[0]``: change assembly name to ``ruber_ref`` 
 
 - ``[2]``: this needs to reflect the path to the ``all_ruber.fastq`` file wherever it lives for you 
 
@@ -182,13 +183,13 @@ module load swset/2018.05 gcc/7.3.0 miniconda3/4.9.2
 
 ## run ipyrad
 conda activate ipyrad
-ipyrad -p params-ruber_denovo.txt -s 12345 -c 8
+ipyrad -p params-ruber_ref.txt -s 12345 -c 8
 ```
 
 Save that file, then submit the job:
 
 ```
-sbatch ruber_denovo.slurm
+sbatch ruber_ref.slurm
 ```
 
 While our job is running, we can take a look at what's happening in each of the iPyRad steps. These are [**documented here**](https://ipyrad.readthedocs.io/en/master/7-outline.html).

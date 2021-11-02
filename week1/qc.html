@@ -17,6 +17,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -107,6 +108,7 @@
 </center>
 <p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
 <h2 id="introduction">1. Introduction</h2>
+<p>For most of the workshop, we’ll be working with the same dataset. This is empirical double digest RADseq data (<a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0037135">Peterson et al. 2012</a>) that I (Sean Harrington) generated as part of my PhD at San Diego State University. The data are for a species of rattlesnake, the red diamond rattlesnake (<em>Crotalus ruber</em>), that is distributed across the Baja California peninsula and into southern California. I was interested in identifying if there is any population structure in <em>C ruber</em> and inferring what population genetic and environmental forces have resulted in any existing structure. The data are single-end reads generated on an Illumina hiSeq. My analyses of these data are published in <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/jbi.13114">Harrington et al. 2018</a>.</p>
 <p><a href="https://ipyrad.readthedocs.io/en/master/">iPyRad</a> is a flexible python-based pipeline for taking various types of restriction-site associated data, processing them, and generated aligned datasets.</p>
 <p>iPyRad is capable of generating datasets either by mapping your raw reads to a reference genome or using a de novo assembly method that does not require a reference. We will use the reference-based method today.</p>
 <p>If you need help with iPyRad outside of this workshop for specific issues, you can always post <a href="https://gitter.im/dereneaton/ipyrad">here</a>. Isaac is <em>very</em> responsive to queries.</p>
@@ -143,7 +145,7 @@ conda install ipyrad -c conda-forge -c bioconda  ## We only need to run this onc
 <p>This will create a params file with the defaults that ipyrad uses, we can modify these as we need . Whatever comes after the -n is what the assembly will be named</p>
 <p>Let’s go look at and edit that</p>
 <pre><code>nano params-ruber_ref.txt  #if you prefer a different text editor to nano, use that instead</code></pre>
-<p>We’ll change a few of these: - <code>[0]</code>: change assembly name to <code>ruber_ref</code></p>
+<p>We’ll change a few of these:</p>
 <ul>
 <li><p><code>[2]</code>: this needs to reflect the path to the <code>all_ruber.fastq</code> file wherever it lives for you</p></li>
 <li><p><code>[3]</code>: this needs to be the path to <code>barcodes_samples.txt</code></p></li>
@@ -160,27 +162,27 @@ conda install ipyrad -c conda-forge -c bioconda  ## We only need to run this onc
 <p>We’re running this interactively, and it should take around 20 minutes. If you had trouble with getting an interactive <code>salloc</code> session running, you could also set this up as a job instead.</p>
 <p>Instructions for how one would do this:</p>
 <p>create and open a new file to run a slurm job (e.g., <code>ruber_ref.slurm</code>). It should contain the following, with the starred sections for your email and your account replaced with your information:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="co">#SBATCH --job-name ruber_denovo</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="co">#SBATCH -A *****YOUR_ACCOUNT*******</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="co">#SBATCH -p teton</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a><span class="co">#SBATCH -t 2-00:00</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a><span class="co">#SBATCH --cpus-per-task=8</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a><span class="co">#SBATCH --mem=10G</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=ALL</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a><span class="co">#SBATCH --mail-user=*****YOUR_EMAIL*********</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a><span class="co">#SBATCH -e ruber_%A_%a.err</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a><span class="co">#SBATCH -o ruber_%A_%a.out</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true"></a><span class="ex">module</span> load swset/2018.05 gcc/7.3.0 miniconda3/4.9.2</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true"></a><span class="co">## run ipyrad</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true"></a><span class="ex">conda</span> activate ipyrad</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true"></a><span class="ex">ipyrad</span> -p params-ruber_denovo.txt -s 12345 -c 8</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name ruber_denovo</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -A *****YOUR_ACCOUNT*******</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -p teton</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -t 2-00:00</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=8</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=10G</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-type=ALL</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-user=*****YOUR_EMAIL*********</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -e ruber_%A_%a.err</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -o ruber_%A_%a.out</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load swset/2018.05 gcc/7.3.0 miniconda3/4.9.2</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">## run ipyrad</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate ipyrad</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="ex">ipyrad</span> <span class="at">-p</span> params-ruber_ref.txt <span class="at">-s</span> 12345 <span class="at">-c</span> 8</span></code></pre></div>
 <p>Save that file, then submit the job:</p>
-<pre><code>sbatch ruber_denovo.slurm</code></pre>
+<pre><code>sbatch ruber_ref.slurm</code></pre>
 <p>While our job is running, we can take a look at what’s happening in each of the iPyRad steps. These are <a href="https://ipyrad.readthedocs.io/en/master/7-outline.html"><strong>documented here</strong></a>.</p>
 <p><br><br><br></p>
 <h2 id="branching-an-assembly">5. Branching an assembly</h2>
