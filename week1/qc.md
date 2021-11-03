@@ -204,6 +204,11 @@ iPyRad includes functionality to make new "branches" of the assembly using diffe
 
 Make a branch of the reference assembly
 ```
+# First, copy the names_ruber_all.txt file from wherever 
+#  you put it into the current directory (specified by .)
+cp <YOUR_PATH_TO/names_ruber_all.txt> .
+
+# Then do the branching
 ipyrad -p params-ruber_ref.txt -b ruber_only_ref names_ruber_all.txt
 ```
 

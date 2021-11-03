@@ -189,7 +189,12 @@ conda install ipyrad -c conda-forge -c bioconda  ## We only need to run this onc
 <p>The FASTQ that we started with includes most individuals of the red diamond rattlesnake, <em>Crotalus ruber</em> but also a few outgroup samples. For the types of analyses we’ll be doing downstream, we want to include only <em>C. ruber</em> samples.</p>
 <p>iPyRad includes functionality to make new “branches” of the assembly using different parameters and/or including/excluding different individuals, and we’ll take advantage of that functionality here.</p>
 <p>Make a branch of the reference assembly</p>
-<pre><code>ipyrad -p params-ruber_ref.txt -b ruber_only_ref names_ruber_all.txt</code></pre>
+<pre><code># First, copy the names_ruber_all.txt file from wherever 
+#  you put it into the current directory (specified by .)
+cp &lt;YOUR_PATH_TO/names_ruber_all.txt&gt; .
+
+# Then do the branching
+ipyrad -p params-ruber_ref.txt -b ruber_only_ref names_ruber_all.txt</code></pre>
 <p>This will use our old assembly and params file to generate a new branch, with params file “params-ruber_only_ref.txt” that includes only samples in the “names_ruber_all.txt” file.</p>
 <p>We need to further edit this file so that “min_sample per locus” is set to 26 - this is about 75% of individuals. This is param [21] - should be at 4 by default.</p>
 <pre><code>nano params-ruber_only_ref.txt</code></pre>
