@@ -13,6 +13,8 @@ date: November 5, 2021
 
 - [3. Post-trimming quality check](#post-trimming-quality-check)
 
+- [4. Trimming using job arrays](#trimming-using-job-arrays)
+
 
 <br><br><br><br><br><br>
 <br><br><br><br><br><br>
@@ -132,7 +134,7 @@ Then add the following to the file, then close and save it
 #SBATCH -e trim_%A_%a.err
 #SBATCH -o std_trim_%A_%a.out
 
-module load swset/2018.05  gcc/7.3.0 miniconda3/4.9.2 trimmomatic/0.36
+module load swset/2018.05  gcc/7.3.0 trimmomatic/0.36
 
 cd <PATH_TO_YOUR/demux_subset>
 
@@ -190,5 +192,65 @@ rsync -raz --progress <yourusername>@teton.uwyo.edu:<your_path_to_/multiqc_repor
 
 
 This should all be familiar, and other than the few RAD-specific things like duplicates and some overhangs that are present, we shouldn't see anything else of concern at this point.
+
+<br><br><br>
+
+## 4. Trimming using job arrays
+
+When we trimmed our files above, we used a simple loop to trim all of the fastq files. This works well enough if you have relatively few, relatively small fastq files. However, if you have many, large files, using a loop that goes over them sequentially can take quite a while. My preferred solution to this is to use job arrays. This is an automated way of submitting replicate jobs as part of a single larger job, such that each "sub-job" can run in parallel, and all jobs can be submitted with a single slurm script and sbatch command. 
+
+
+
+The below will submit such a job array where each job will process a single fastq file when saved and run as a slurm script.
+
+```
+#!/bin/bash
+
+#SBATCH --job-name Trim
+#SBATCH -A <YOUR_ACCOUNT>
+#SBATCH -p teton
+#SBATCH -t 1-00:00
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=10
+#SBATCH --mem-per-cpu=24G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=<YOUR_EMAIL>
+#SBATCH -e err_trim_%A_%a.err
+#SBATCH -o std_trim_%A_%a.out
+#SBATCH --array=1-40
+
+
+# load modules necessary to use conda on Teton
+module load swset/2018.05  gcc/7.3.0 trimmomatic/0.36
+
+# Set working directory to where the fastqs are
+cd <YOUR_DIRECTORY_TO_FASTQs_toTRIM>
+
+
+for x in *fastq.gz; do   # use a loop to find all the files that end in fastq.gz and assign them to a bash array
+  trimfiles=(${trimfiles[@]} "${x}")
+done
+
+
+## For whichever SLURM_ARRAY_TASK_ID index a job is in, get the sample 
+##     name to simplify the trimmomatic call below
+## here, I subtract 1 from the $SLURM_ARRAY_TASK_ID because bash indexing starts at zero
+##   I think it's less confusing to subtract 1 here than to remember to do it when 
+##   specifying the number of jobs for the array
+sample=${trimfiles[($SLURM_ARRAY_TASK_ID-1)]}
+
+# Run trimmomatic on each file
+
+	trimmomatic  SE -threads 6 $sample trimmed_$sample \
+	ILLUMINACLIP:/project/inbre-train/2021_popgen_wkshp/data/TruSeq3-PE-2.fa.txt:2:30:10 \
+	LEADING:3 TRAILING:3 MINLEN:36
+
+# put the trimmed reads into a directory
+mkdir trimmed_reads
+mv trimmed_*fastq.gz trimmed_reads
+```
+
+
+Ensure that `#SBATCH --array=` is set to the correct number of jobs that you are running for any given job array. The script will effectively loop submit your job over the indices in that argument, replacing `$SLURM_ARRAY_TASK_ID` with the current index for each submission.
 
 
