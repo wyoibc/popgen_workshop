@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Sean Harrington &amp; Vikram Chhatre" />
+  <meta name="dcterms.date" content="2021-11-05" />
+  <title>FASTQ format</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">FASTQ format</h1>
+<p class="author">Sean Harrington &amp; Vikram Chhatre</p>
+<p class="date">November 5, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#introduction">1. Introduction</a></p></li>
+<li><p><a href="#fastq-format">2. FASTQ format</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="introduction">1. Introduction</h2>
+<p>Last week we ran through some basics of Teton usage and worked through using iPyRad to process our RADseq data. The iPyRad pipeline includes steps to automate the demultiplexing, quality control, trimming, and alignment of our data. This week, we’ll handle these steps manually. Whereas the iPyRad pipeline is specific to RADseq and related types of sequence data, the approaches we’ll use today are generalizable to any type of genomic or subgenomic DNA sequence data that you may work with, so long as you have a reference genome to map your reads to, although certain datatypes may require tweaking of these steps or additional processing.</p>
+<h3 id="data-from-last-week">Data from last week</h3>
+<p>For anyone who did not finish running iPyRad, we have posted all ouput files, as well as the slurm script and params files used to run through last week’s session to</p>
+<pre><code>/project/inbre-train/2021_popgen_wkshp/week_1_ipyrad_output</code></pre>
+<p><br><br><br></p>
+<h2 id="fastq-format">2. FASTQ format</h2>
+<p>We’ve been working with a fastq file, but so far haven’t explored the structure of these files yet. Let’s do that. Navigate to where your <code>all_ruber.fastq</code> file is located, and we’ll look at the fist 8 lines of the file:</p>
+<pre><code>cd &lt;path_to_your/all_ruber.fastq&gt;
+head -n 8 all_ruber.fastq</code></pre>
+<p>this should return something like this (we’ve truncated the reads so they fit on a single line here):</p>
+<pre><code>@SRR6143937.sra.1 1 length=96
+TGATCGCTAANAGCAAATTGAGTCCCCTGCCCATCAGTTGATGATGTCATTGGTACTTTCTATTGTGTCA
++SRR6143937.sra.1 1 length=96
+IIIIIIIIFD#24AFHJJJJJJIIJJJJJJJJJJJJJIJJJJJJJJJJJJJJJGHIJJJJJJJJJHIJJJ
+@SRR6143937.sra.2 2 length=96
+TGATCGCTTGNAGGGGGCGCATGAAGAGCGCAGGCACAGAGCAAGGCCCCGCCCTCCCCAGGGACTCATT
++SRR6143937.sra.2 2 length=96
+IIIIIIIIFF#22&lt;DHIHJJJJJIJIJJJIJJJJHHHHFFFFFEECDDDDDDDDDDDDDDDDB&lt;@BDDDE</code></pre>
+<p>Each read from the sequencer is represented by 4 lines: the first 4 lines are the first read, the second set of 4 lines are the seond read, etc. For each read, the first line is the header, and always starts with <code>@</code>. This contains a sequence identifier and any various information about the read, often including information about the sequencing run. The second line, after the header, is the actual sequence read. The next line always starts with <code>+</code> and may contain either no additional text, or the sequence identifier and extra information, as in the header. Line 4 for each read, following the <code>+</code> line, indicates the quality score for each DNA base in the read. You can find the meaning of each of these symbols <a href="https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/QualityScoreEncoding_swBS.htm">here</a>.</p>
+<p>In most cases, fastq files will be stored in a compressed format, with the extension fastq.gz. These can be read and taken as input by many programs, but the command <code>head</code> and other simple linux text reading programs will not read thes files. Instead we can use methods that read compressed files directly (e.g., <code>zless &lt;filename&gt;</code>) or pipe output from these to something else (e.g., <code>zcat &lt;filename&gt; | head</code>).</p>
+</body>
+</html>
