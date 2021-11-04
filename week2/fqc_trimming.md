@@ -175,7 +175,7 @@ salloc --account=<YOUR_ACCOUNT>  -t 0-0:30:00 --mem=4G --nodes=1 --ntasks-per-no
 module load swset gcc fastqc/0.11.7 miniconda3/4.9.2 # load the modules necessary
 cd trimmed_reads
 mkdir fastqc_out
-fastqc -t 4 *.fastq -o fastqc_out
+fastqc -t 4 *.fastq.gz -o fastqc_out
 
 cd fastqc_out
 conda activate multiqc
