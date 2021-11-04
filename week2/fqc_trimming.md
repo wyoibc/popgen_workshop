@@ -128,7 +128,7 @@ Then add the following to the file, then close and save it
 #SBATCH -t 1-00:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=6
-#SBATCH --mem-per-cpu=5G
+#SBATCH --mem=5G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=<YOUR_EMAIL>
 #SBATCH -e trim_%A_%a.err
@@ -212,7 +212,7 @@ The below will submit such a job array where each job will process a single fast
 #SBATCH -t 1-00:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=10
-#SBATCH --mem-per-cpu=24G
+#SBATCH --mem=24G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=<YOUR_EMAIL>
 #SBATCH -e err_trim_%A_%a.err
