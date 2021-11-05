@@ -17,6 +17,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -94,6 +95,7 @@
 <li><p><a href="#housekeeping-where-are-all-files">1. Housekeeping: Where Are All Files?</a></p></li>
 <li><p><a href="#demultiplex-using-barcodes">2. Demultiplex using Barcodes</a></p></li>
 <li><p><a href="#truncate-quality-scores">3. Truncate Quality Scores</a></p></li>
+<li><p><a href="#other-pipelines">4. Other pipelines</a></p></li>
 </ul>
 <p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
 <h2 id="housekeeping-where-are-all-files">1. Housekeeping: Where Are All Files</h2>
@@ -102,38 +104,38 @@
 <li><p>A fastq file containing sequence data on all individuals</p></li>
 <li><p>Barcodes that link sequence reads with the individuals they came from</p></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="fu">ls</span> -lh</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="ex">-rwxrwxr-x</span> 1 vchhatre 6.0G Nov  4 13:06 all_ruber.fastq</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre  863 Nov  4 13:09 barcodes.txt</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">-rwxrwxr-x</span> 1 vchhatre 6.0G Nov  4 13:06 all_ruber.fastq</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre  863 Nov  4 13:09 barcodes2.txt</span></code></pre></div>
 <p>If you are coming to the workshop for the first time today, please copy these files as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="bu">cd</span> /gscratch/YOUR_USER_NAME/</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="fu">mkdir</span> rattlesnake</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="bu">cd</span> rattlesnake/</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/all_ruber.fastq .</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/barcodes_samples.txt .</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /gscratch/YOUR_USER_NAME/</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> rattlesnake</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> rattlesnake/</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/all_ruber.fastq .</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/barcodes2.txt .</span></code></pre></div>
 <ul>
 <li>Take a quick look inside the barcodes file to know what information we have:</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="fu">head</span> barcodes_samples.txt</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="ex">SD_Field_1453</span>   CTCTCCAG    8</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="ex">SD_Field_0983</span>   TAATTG  6</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="ex">SD_Field_1880</span>   ATCTCGT 7</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="ex">SD_Field_0201</span>   GACAACT 7</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="ex">SD_Field_2127</span>   CTCGCAA 7</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a><span class="ex">SD_Field_1878</span>   TGGACACT    8</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="ex">SD_Field_2287</span>   TGTCAAT 7</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="ex">SD_Field_0598</span>   TCCTGCT 7</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="ex">SD_Field_1899</span>   GAACTT  6</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a><span class="ex">SD_Field_1205</span>   ATGCT   5</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> barcodes2.txt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_1453</span>   CTCTCCAG    8</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_0983</span>   TAATTG  6</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_1880</span>   ATCTCGT 7</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_0201</span>   GACAACT 7</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_2127</span>   CTCGCAA 7</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_1878</span>   TGGACACT    8</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_2287</span>   TGTCAAT 7</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_0598</span>   TCCTGCT 7</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_1899</span>   GAACTT  6</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ex">SD_Field_1205</span>   ATGCT   5</span></code></pre></div>
 <ul>
 <li>Note that the third field is the length of barcodes. We will need that information in a bit.</li>
 </ul>
@@ -155,35 +157,35 @@
 <ul>
 <li>Please type everything out instead of copy pasting. Yes, you will make mistakes and the script won’t work on first try. But you will learn something.</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="co">#SBATCH --time=1:00:00</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="co">#SBATCH --mem=20G</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="co">#SBATCH -J demux</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="co">#SBATCH --account=YOUR_PROJECT</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="co">## Navigate to the data folder</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a><span class="bu">cd</span> /gscratch/YOUR_ACCOUNT/rattlesnake/</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a><span class="co">## Create shortcut for the fastq file</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a><span class="va">ruber=</span><span class="st">&quot;all_ruber.fastq&quot;</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a><span class="co">## Create output directory</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a><span class="fu">mkdir</span> -p demux_out</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a><span class="co">## Demultiplexing begins</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a><span class="kw">while</span> <span class="bu">read</span> <span class="va">name</span> <span class="va">bar</span> <span class="va">leng</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a><span class="kw">do</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a>  <span class="fu">grep</span> -A 2 -B 1 <span class="st">&quot;^</span><span class="va">$bar</span><span class="st">&quot;</span> <span class="va">$ruber</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&quot;s/^</span><span class="va">$bar</span><span class="st">//&quot;</span> <span class="op">&gt;&gt;</span> demux_out/<span class="va">${name}</span>.fastq</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a><span class="kw">done</span> <span class="op">&lt;</span> <span class="ex">barcodes_samples.txt</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=1:00:00</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=20G</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH -J demux</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=YOUR_PROJECT</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Navigate to the data folder</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /gscratch/YOUR_ACCOUNT/rattlesnake/</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">## Create shortcut for the fastq file</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="va">ruber</span><span class="op">=</span><span class="st">&quot;all_ruber.fastq&quot;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">## Create output directory</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> demux_out</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Demultiplexing begins</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">name</span> <span class="va">bar</span> <span class="va">leng</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grep</span> <span class="at">-A</span> 2 <span class="at">-B</span> 1 <span class="st">&quot;^</span><span class="va">$bar</span><span class="st">&quot;</span> <span class="va">$ruber</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&quot;s/^</span><span class="va">$bar</span><span class="st">//&quot;</span> <span class="op">&gt;&gt;</span> demux_out/<span class="va">${name}</span>.fastq</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span> <span class="op">&lt;</span> barcodes2.txt</span></code></pre></div>
 <ul>
 <li><p>At the end of this run, you should have 40 fastq files named after each of the 40 individuals and their barcodes removed.</p></li>
 <li><p>If you recall from introduction to fastq format, the fourth line of each read record contains quality scores per nucleotide. We removed barcodes, but we haven’t yet removed quality scores for those barcodes. We need to do that before moving on.</p></li>
@@ -198,17 +200,21 @@
 <p><br></p>
 <h3 id="the-truncate.sh-script">3.1 The <code>truncate.sh</code> Script</h3>
 <p><strong>The <code>truncate.sh</code> Script</strong></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="bu">cd</span> /gscratch/YOUR_ACCOUNT/rattlesnake</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="fu">mkdir</span> -p finalfq</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="kw">while</span> <span class="bu">read</span> <span class="va">name</span> <span class="va">barcode</span> <span class="va">leng</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="kw">do</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>  <span class="fu">sed</span> -E <span class="st">&#39;0~4 s/^.{&#39;&quot;</span><span class="va">$leng</span><span class="st">&quot;&#39;}//&#39;</span> demux_out/<span class="va">${name}</span>.fastq <span class="op">&gt;&gt;</span> finalfq/<span class="va">${name}</span>.fastq</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a><span class="kw">done</span> <span class="op">&lt;</span> <span class="ex">barcodes_samples.txt</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /gscratch/YOUR_ACCOUNT/rattlesnake</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> finalfq</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">name</span> <span class="va">barcode</span> <span class="va">leng</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sed</span> <span class="at">-E</span> <span class="st">&#39;0~4 s/^.{&#39;&quot;</span><span class="va">$leng</span><span class="st">&quot;&#39;}//&#39;</span> demux_out/<span class="va">${name}</span>.fastq <span class="op">&gt;&gt;</span> finalfq/<span class="va">${name}</span>.fastq</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span> <span class="op">&lt;</span> barcodes2.txt</span></code></pre></div>
 <p>This script will produce 40 fastq files in the <code>finalfq</code> folder and each of these files will have the same length for lines 2 and 4 per read entry.</p>
+<p><br><br><br></p>
+<h2 id="other-pipelines">4. Other pipelines</h2>
+<p>Many pipelines exist that demultiplex data and run additional processing, each with their own set of advantages. These often include the ability to identify barcodes with a tolerance for Ns or mismatches, which our approach does not handle.</p>
+<p>One alternative to explore is the program <a href="https://github.com/ulelab/ultraplex">Ultraplex program</a>, which is designed to demultiplex reads, trim adapters, and trim bases/reads by quality scores all from a single command–note that we have not yet tested it ourselves, but it looks useful. What tool you will want to use for each of these steps will depend heavily on your data type. For most RAD projects, you will receive data that needs to be demultiplexed, and you may want to use a program like iPyRad, Stacks, or Ultraplex that combines multiple steps into an easy to use pipeline. If you are sequencing whole genomes on an Illumina platform, my experience so far has been that these are returned already demultiplexed, so you can skip this step, but will need to then handle the remaining steps of trimming, etc.</p>
 </body>
 </html>

@@ -13,6 +13,8 @@ author: Wyoming INBRE Data Science Core
 
 - [3. Truncate Quality Scores](#truncate-quality-scores)
 
+- [4. Other pipelines](#other-pipelines)
+
 
 
 
@@ -51,7 +53,7 @@ Let's take inventory of our files, which should be:
 ls -lh
 
 -rwxrwxr-x 1 vchhatre 6.0G Nov  4 13:06 all_ruber.fastq
--rw-rw-r-- 1 vchhatre  863 Nov  4 13:09 barcodes.txt
+-rw-rw-r-- 1 vchhatre  863 Nov  4 13:09 barcodes2.txt
 
 ```
 
@@ -68,7 +70,7 @@ cd rattlesnake/
 
 cp /project/inbre-train/2021_popgen_wkshp/data/all_ruber.fastq .
 
-cp /project/inbre-train/2021_popgen_wkshp/data/barcodes_samples.txt .
+cp /project/inbre-train/2021_popgen_wkshp/data/barcodes2.txt .
 
 ```
 
@@ -76,7 +78,7 @@ cp /project/inbre-train/2021_popgen_wkshp/data/barcodes_samples.txt .
 
 ```bash
 
-head barcodes_samples.txt
+head barcodes2.txt
 
 SD_Field_1453	CTCTCCAG	8
 SD_Field_0983	TAATTG	6
@@ -153,7 +155,7 @@ mkdir -p demux_out
 while read name bar leng
 do
   grep -A 2 -B 1 "^$bar" $ruber | sed "s/^$bar//" >> demux_out/${name}.fastq
-done < barcodes_samples.txt
+done < barcodes2.txt
 
 ```
 
@@ -193,8 +195,24 @@ mkdir -p finalfq
 while read name barcode leng
 do
   sed -E '0~4 s/^.{'"$leng"'}//' demux_out/${name}.fastq >> finalfq/${name}.fastq
-done < barcodes_samples.txt
+done < barcodes2.txt
 
 ```
 
 This script will produce 40 fastq files in the ``finalfq`` folder and each of these files will have the same length for lines 2 and 4 per read entry.
+
+
+<br><br><br>
+
+
+## 4. Other pipelines
+
+Many pipelines exist that demultiplex data and run additional processing, each with their own set of advantages. These often include the ability to identify barcodes with a tolerance for Ns or mismatches, which our approach does not handle.
+
+One alternative to explore is the program [Ultraplex program](https://github.com/ulelab/ultraplex), which is designed to demultiplex reads, trim adapters, and trim bases/reads by quality scores all from a single command--note that we have not yet tested it ourselves, but it looks useful. What tool you will want to use for each of these steps will depend heavily on your data type. For most RAD projects, you will receive data that needs to be demultiplexed, and you may want to use a program like iPyRad, Stacks, or Ultraplex that combines multiple steps into an easy to use pipeline. If you are sequencing whole genomes on an Illumina platform, my experience so far has been that these are returned already demultiplexed, so you can skip this step, but will need to then handle the remaining steps of trimming, etc.
+
+
+
+
+
+

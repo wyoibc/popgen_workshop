@@ -40,8 +40,11 @@ To check the quality of our reads, we'll use a tool FASTQC. This runs very fast 
 
 Let's start by creating a directory with only a subset of the demultiplexed FASTQ files
 
+
 ```
 cd <PATH_TO_DIRECTORY_CONTAINING_DEMUXED_FASTQs>
+# First let's gzip all of our FastQ files to save space
+gzip *fastq
 mkdir demux_subset
 cp SD_Field_1453.fastq.gz SD_Field_12* SD_Field_0506.fastq.gz demux_subset
 cd demux_subset
@@ -143,7 +146,7 @@ cd <PATH_TO_YOUR/demux_subset>
 for x in *fastq.gz; do 
 	trimmomatic  SE -threads 6 $x trimmed_$x \
 	ILLUMINACLIP:/project/inbre-train/2021_popgen_wkshp/data/TruSeq3-PE-2.fa.txt:2:30:10 \
-	LEADING:3 TRAILING:3 MINLEN:36
+	LEADING:3 TRAILING:3  SLIDINGWINDOW:4:30 MINLEN:36
 done
 
 # put the trimmed reads into a new directory
@@ -243,7 +246,7 @@ sample=${trimfiles[($SLURM_ARRAY_TASK_ID-1)]}
 
 	trimmomatic  SE -threads 6 $sample trimmed_$sample \
 	ILLUMINACLIP:/project/inbre-train/2021_popgen_wkshp/data/TruSeq3-PE-2.fa.txt:2:30:10 \
-	LEADING:3 TRAILING:3 MINLEN:36
+	LEADING:3 TRAILING:3 SLIDINGWINDOW:4:30 MINLEN:36
 
 # put the trimmed reads into a directory
 mkdir trimmed_reads
