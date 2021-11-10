@@ -27,3 +27,25 @@ author: Wyoming INBRE Data Science Core
 - [Week 2: Demultiplexing Samples](week2/demux.html)
 
 - [Week 2: Quality assessment and trimming](week2/fqc_trimming.html)
+
+
+### 4. Read Mapping and Variant Calling
+
+- [Week 3: Read Mapping](week3/read_mapping.html)
+
+- [Week 3: Variant Calling](week3/varcal.html)
+
+- [Week 3: Variant Call Format (VCF)](week3/vcf.html)
+
+
+### 5. Site Filtering Using Popgen Criteria
+
+- [Week 3: HWE Filtering](hwe.html)
+
+
+
+
+
+
+
+
