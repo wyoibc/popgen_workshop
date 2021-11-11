@@ -250,7 +250,7 @@ sample=${trimfiles[($SLURM_ARRAY_TASK_ID-1)]}
 
 # put the trimmed reads into a directory
 mkdir trimmed_reads
-mv trimmed_*fastq.gz trimmed_reads
+mv trimmed_$sample trimmed_reads
 ```
 
 

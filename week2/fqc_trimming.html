@@ -182,7 +182,7 @@ sample=${trimfiles[($SLURM_ARRAY_TASK_ID-1)]}
 
 # put the trimmed reads into a directory
 mkdir trimmed_reads
-mv trimmed_*fastq.gz trimmed_reads</code></pre>
+mv trimmed_$sample trimmed_reads</code></pre>
 <p>Ensure that <code>#SBATCH --array=</code> is set to the correct number of jobs that you are running for any given job array. The script will effectively loop submit your job over the indices in that argument, replacing <code>$SLURM_ARRAY_TASK_ID</code> with the current index for each submission.</p>
 </body>
 </html>
