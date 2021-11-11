@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Sean Harrington &amp; Vikram Chhatre" />
+  <meta name="dcterms.date" content="2021-11-12" />
+  <title>Overview of population structure and inference of selection</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Overview of population structure and inference of selection</h1>
+<p class="author">Sean Harrington &amp; Vikram Chhatre</p>
+<p class="date">November 12, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#introduction">1. Introduction</a></p></li>
+<li><p><a href="#population-structure">2. Population structure</a></p></li>
+<li><p><a href="#inferring-selection">3. Inferring selection</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="introduction">1. Introduction</h2>
+<p>So far, we have explored have processed our data to get it from the raw reads that we generally start with into aligned data where our files are now sequences of SNPs or loci that are on a common coordinate system for each individual sample. This allows us to now make inferences based on variation at sites in the alignment across samples. The two types of analyses that we will aim to cover in the final two sessions of the workshop are population structure analysis and inference of selection. We will briefly introduce these conceptually here so that we can dive into these in the coming weeks.</p>
+<p><br><br><br></p>
+<h2 id="population-structure">2. Population structure</h2>
+<p>Population assignment is a critical step in many population genetic and phylogeographic studies. Most downstream methods for estimating gene flow, divergence, population size, and other interesting population parameters require populations to be specified by you as inference program input. If you have population structure in your data that you have not adequately accounted for, this can bias many types of analyses. E.g., if you try to estimate the history of population size changes in a group of samples that you assume are a single population when they actually come from multiple discrete populations, this will bias your results.</p>
+<p>There are multiple ways to assign individuals to discrete populations. In some cases, you may have a priori ideas about population boundaries based on geographic discontinuities, differences in morphology across a species range, previous genetic data, or other sources of information. However, most of the time you will want to infer the number of populations and population membership of individuals directly from your data. This is essentially a classification problem: we are seeking to classify our whole set of genetic samples into a number of populations, often while also seeking to determine how many populations are present.</p>
+<p>One of the most commonly used programs for the inference of population structure is the aptly named program <a href="https://web.stanford.edu/group/pritchardlab/structure.html">Structure</a>. Structure is a model-based clustering method that seeks to split individuals into clusters such that linkage disequilibrium is minimized and Hardy-Weinberg equilibrium is maximized within each cluster. Structure us a Bayesian method that relies on Markov chain Monte Carlo (MCMC) sampling, and can thus become somewhat unwieldy with large datasets. Many fast alternatives have been developed since the advent of Structure, including <a href="https://dalexander.github.io/admixture/">Admixture</a> which utilizes the same model from Structure, but in a faster maximum likelihood implementation. Other alternative approaches do not explicitly model Hardy-Weinberg equilibrium or linkage disequilibrium, including the sNMF appraoch implemented in the <a href="http://membres-timc.imag.fr/Olivier.Francois/LEA/files/LEA_github.pdf">LEA R package</a> and DAPC as implemented in the <a href="https://github.com/thibautjombart/adegenet">Adegenet R package</a>. All of these methods often produce comparable results, which are often visualized as barplots of the estimated membership of each sample in one or more population clusters or as pie charts of the same information plotted onto a map as show in the figures below.</p>
+<center>
+<img src="Admix_barplot.png" width=500 />
+</center>
+<center>
+<img src="admix_map.png" width=500 />
+</center>
+<p>If using DAPC to estimate population membership, it is important to note that in my experience, with large amounts of data, DAPC is very good at estimating which population a sample belongs to, but if a sample is admixed, it will be confidently placed into the population that it shares the most ancestry with. Barplots or pie charts of DAPC reflect the uncertainty in classification rather than amount of admixture, so care should be taken not to interpret DAPC plots the same way as plots from Strucure, Admixture, sNMF, etc.</p>
+<p>An additional critical consideration is that continuous spatial genetic structure across the range of a population can be highly problematic for population structure methods. One of the most common types of continuous spatial structure is isolation by distance (IBD), which occurs when dispersal is limited and individuals that are geographically closer are more related than individuals that are geographically distant. If IBD is strong enough, population structure methods can incorrectly infer the presence of multiple discrete populations with a gradient of admixture between the farthest individuals. This problem is reviewed well in <a href="https://academic.oup.com/genetics/article-abstract/210/1/33/6088031">Bradburd et al. 2018</a> and they developed the method conStruct to simultaneously continuous and discrete spatial structure. The program can be finicky, particularly with regards to missing data, so we won’t use it in the workshop, but it is a powerful tool. In any case, testing to isolation by distance and being aware of its potentially misleading effects can help to prevent incorrect inferences of population structure.</p>
+<p><br><br><br></p>
+<h2 id="inferring-selection">3. Inferring selection</h2>
+</body>
+</html>
