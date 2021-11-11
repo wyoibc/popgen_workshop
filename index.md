@@ -42,7 +42,9 @@ author: Wyoming INBRE Data Science Core
 
 - [Week 3: HWE Filtering](hwe.html)
 
+### 6. Population structure and inference of selection
 
+- [Week 3: Overview of structure and selection](week3/popstruct_selec_overview.html)
 
 
 
