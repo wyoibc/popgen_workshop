@@ -107,7 +107,7 @@ base=$(echo $sample | sed &#39;s/trimmed_reads\/trimmed_//&#39;)
 outname=${base%.fastq.gz}.sam
 
 # Run bwa on each file using the mem algorithm
-bwa mem -t 6 CroVir_idx $to_map &gt; $outname</code></pre>
+bwa mem -t 6 CroVir_idx $sample &gt; $outname</code></pre>
 <p>This should run VERY quickly as long as we don’t run into issues with job allocations. As we have noted before, the data here are fairly small, so don’t necessarily expect such short run times with larger datasets, particularly as you get into whole genomes.</p>
 <p>That will generate a lot of err and std_out files, let’s clean those up a bit and move our sam files to a new subdirectory.</p>
 <pre><code>mkdir errs_outs_bwa
