@@ -68,6 +68,18 @@ An additional critical consideration is that  continuous spatial genetic structu
 
 ## 3. Inferring selection
 
+One of the foremost goals in biology is to identify genetic variation underlying traits of interest. Data from population genomic studies offers a unique way of identifying regions of the genome that might control a given trait. For example, consider two populations of a species inhabiting two different environments. It is likely that these population have the greatest fitness in their home environments stemming from genetic adaptations they may have developed to their native conditions. Signatures of these adaptations show up as genomic regions of increased divergence (e.g. higher FST than genomic average) between the populations. Identifying these genomic regions is crucial to our quest of linking phenotypes to genotypes. 
+
+Over the years, a number of methods have been developed to identify regions of genomes under Darwinian natural selection. These methods fall into two main categories:
+
+- Frequentist methods use only genomic data to identify extreme allele frequency differences between populations. e.g. [Bayescan](http://cmpg.unibe.ch/software/BayeScan/) and XTX (Coop et al)
+
+- Environmental correlation methods try to identify relationship between environmental differences and genomic differences. e.g. Bayenv (Coop et al) and LFMM (Latent Factor Mixed Models).
+
+In the final session of this workshop, we will use two of these methods (Bayescan and Bayenv) to identify candidate genes (those likely under natural selection) in the rattlesnake genome. We will compare and contrast results from these two tests to increase our confidence in the inference of natural selection. The goal is to make a venn diagram showing shared and unique candidates as shown in the following figure:
 
 
+<center>
+<img src="venn.png" width=700>
+</center>
 

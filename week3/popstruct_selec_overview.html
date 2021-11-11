@@ -8,13 +8,10 @@
   <meta name="dcterms.date" content="2021-11-12" />
   <title>Overview of population structure and inference of selection</title>
   <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
   <link rel="stylesheet" href="avenir-white.css" />
   <!--[if lt IE 9]>
@@ -51,5 +48,15 @@
 <p>An additional critical consideration is that continuous spatial genetic structure across the range of a population can be highly problematic for population structure methods. One of the most common types of continuous spatial structure is isolation by distance (IBD), which occurs when dispersal is limited and individuals that are geographically closer are more related than individuals that are geographically distant. If IBD is strong enough, population structure methods can incorrectly infer the presence of multiple discrete populations with a gradient of admixture between the farthest individuals. This problem is reviewed well in <a href="https://academic.oup.com/genetics/article-abstract/210/1/33/6088031">Bradburd et al. 2018</a> and they developed the method conStruct to simultaneously continuous and discrete spatial structure. The program can be finicky, particularly with regards to missing data, so we won’t use it in the workshop, but it is a powerful tool. In any case, testing to isolation by distance and being aware of its potentially misleading effects can help to prevent incorrect inferences of population structure.</p>
 <p><br><br><br></p>
 <h2 id="inferring-selection">3. Inferring selection</h2>
+<p>One of the foremost goals in biology is to identify genetic variation underlying traits of interest. Data from population genomic studies offers a unique way of identifying regions of the genome that might control a given trait. For example, consider two populations of a species inhabiting two different environments. It is likely that these population have the greatest fitness in their home environments stemming from genetic adaptations they may have developed to their native conditions. Signatures of these adaptations show up as genomic regions of increased divergence (e.g. higher FST than genomic average) between the populations. Identifying these genomic regions is crucial to our quest of linking phenotypes to genotypes.</p>
+<p>Over the years, a number of methods have been developed to identify regions of genomes under Darwinian natural selection. These methods fall into two main categories:</p>
+<ul>
+<li><p>Frequentist methods use only genomic data to identify extreme allele frequency differences between populations. e.g. <a href="http://cmpg.unibe.ch/software/BayeScan/">Bayescan</a> and XTX (Coop et al)</p></li>
+<li><p>Environmental correlation methods try to identify relationship between environmental differences and genomic differences. e.g. Bayenv (Coop et al) and LFMM (Latent Factor Mixed Models).</p></li>
+</ul>
+<p>In the final session of this workshop, we will use two of these methods (Bayescan and Bayenv) to identify candidate genes (those likely under natural selection) in the rattlesnake genome. We will compare and contrast results from these two tests to increase our confidence in the inference of natural selection. The goal is to make a venn diagram showing shared and unique candidates as shown in the following figure:</p>
+<center>
+<img src="venn.png" width=700>
+</center>
 </body>
 </html>
