@@ -101,16 +101,16 @@ cd $mapped
 
 while read samp
 do
-  mkdir $samp 
+  mkdir -p $samp 
   echo "Working on $samp"
-  echo "Converting ${samp}.sam to ${samp}.bam
-  samtools view -bS ${samp}.sam > $samp/${samp}.bam
+  echo "Converting ${samp}.sam to ${samp}.bam"
+  samtools view -@ 16 -bS ${samp}.sam > $samp/${samp}.bam
   echo "Getting alignment stats"
-  bamtools stats -in ${samp}.bam > $samp/${samp}.alnStats
+  bamtools stats -in $samp/${samp}.bam > $samp/${samp}.alnStats
   echo "Sorting and indexing the bam file"
-  samtools sort $samp/${samp}.bam -o $samp/${samp}_sorted.bam
-  samtools index $samp/${samp}_sorted.bam
-  echo "Finished processing at $(date)
+  samtools sort -@ 16 $samp/${samp}.bam -o $samp/${samp}_sorted.bam
+  samtools index -@ 16 $samp/${samp}_sorted.bam
+  echo "Finished processing at $(date)"
   echo "Created following files:"
   echo "$(ls -othr $samp/)"
   echo "---------------------------------------------------------"
@@ -166,7 +166,7 @@ cat SD_Field_1880/SD_Field_1880.alnStats
 
 ```bash
 
-find . -name '*.alnStats' -exec grep "Mapped reads:" {} \;
+find . -name '*.alnStats' -exec cat {} \; | grep "Mapped reads:"
 
 ```
 
@@ -200,20 +200,21 @@ module load gcc swset
 
 
 ## Load additional modules we need
-module load samtools bamtools
+module load samtools bamtools bcftools
 
-
-## Create some output folders
-mkdir -p vcf bcf
 
 ## Create file path shortcuts
 mapped="/path/to/your/mapped_reads_folder"
+
+## Create some output folders
+mkdir -p $mapped/vcf $mapped/bcf
+
 
 ## Shortcut to a file containing all sample names
 samps="$mapped/sampnames"  
 
 ## Shortcut to the reference genome
-crovir="/project/inbre-train/2021_popgen_wkshp/data/CroVir_idx"
+crovir="/project/inbre-train/2021_popgen_wkshp/data/refindex/CroVir.fa"
 
 
 ## Navigate to the target directory
@@ -228,9 +229,9 @@ bamlist="$mapped/bamlist.txt"
 
 echo "Current time is: $(date)"
 
-echo "Starting samtools mpileup"
+echo "Starting bcftools mpileup"
 
-samtools mpileup -t DP,AD -uf $crovir --bam-list $bamlist > bcf/CroVir.bcf
+bcftools mpileup --threads 16 -t DP,AD -f $crovir --bam-list $bamlist > bcf/CroVir.bcf
 
 echo "Calling SNPs for All samples"
 
