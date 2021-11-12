@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2021-11-12" />
+  <title>Variant Calling</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Variant Calling</h1>
+<p class="date">November 12, 2021</p>
+</header>
+<p>We now have all the information we need in order to identify genetic variants in our population sample:</p>
+<ul>
+<li>Sequence Alignment Files (<code>.sam</code>), one per study sample</li>
+</ul>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#prepping-sam-files">1. Prepping SAM Files</a></p></li>
+<li><p><a href="#calling-snps">2. Calling SNPs</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="prepping-sam-files">1. Prepping SAM Files</h2>
+<p>SAM files can get very large, hundreds of gigabytes large. It’s always helpful to compress them. Furthermore, many downstream programs require that the sam files be sorted by chromosome and scaffolds/contigs and then indexed. Indexing allows for quick retrieval of alignments from the same genomic region. Finally, it would be useful to get summary alignment stats on each sample so we can find out what percentage of reads in each sample aligned with the reference genome. We will combine all these steps into a single script.</p>
+<h3 id="bamsortidx.sh-script">1.1 <code>bamsortidx.sh</code> Script</h3>
+<p>This script will compress, sort and index the BAM files &amp; print alignment stats</p>
+<ul>
+<li>Navigate to the folder where you have all your mapped sam files.</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">cd</span> mapped_reads</span></code></pre></div>
+<ul>
+<li>Open a new file and write this script</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">vim</span> bamsortidx.sh</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#SBATCH -t 1:00:00</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#SBATCH --ntasks-per-node=16</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#SBATCH -J bamsort</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="co">#SBATCH --account=YOUR_PROJECT</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="co">## Load base modules</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a><span class="ex">module</span> load gcc swset</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a><span class="co">## Load additional modules we need</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="ex">module</span> load samtools bamtools</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a><span class="co">## Create file path shortcuts</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a><span class="va">mapped=</span><span class="st">&quot;/path/to/your/mapped_reads_folder&quot;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a><span class="co">## Shortcut to a file containing all sample names</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a><span class="va">samps=</span><span class="st">&quot;</span><span class="va">$mapped</span><span class="st">/sampnames&quot;</span>  </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a><span class="co">## Navigate to the target directory</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a><span class="bu">cd</span> <span class="va">$mapped</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a><span class="co">## Begin script loop</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a><span class="kw">while</span> <span class="bu">read</span> <span class="va">samp</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a><span class="kw">do</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a>  <span class="fu">mkdir</span> <span class="va">$samp</span> </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a>  <span class="bu">echo</span> <span class="st">&quot;Working on </span><span class="va">$samp</span><span class="st">&quot;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a>  <span class="bu">echo</span> <span class="st">&quot;Converting </span><span class="va">${samp}</span><span class="st">.sam to </span><span class="va">${samp}</span><span class="st">.bam</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a><span class="st">  samtools view -bS </span><span class="va">${samp}</span><span class="st">.sam &gt; </span><span class="va">$samp</span><span class="st">/</span><span class="va">${samp}</span><span class="st">.bam</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a><span class="st">  echo &quot;</span>Getting alignment stats<span class="st">&quot;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="st">  bamtools stats -in </span><span class="va">${samp}</span><span class="st">.bam &gt; </span><span class="va">$samp</span><span class="st">/</span><span class="va">${samp}</span><span class="st">.alnStats</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a><span class="st">  echo &quot;</span>Sorting and indexing the bam file<span class="st">&quot;</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="st">  samtools sort </span><span class="va">$samp</span><span class="st">/</span><span class="va">${samp}</span><span class="st">.bam -o </span><span class="va">$samp</span><span class="st">/</span><span class="va">${samp}</span><span class="st">_sorted.bam</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="st">  samtools index </span><span class="va">$samp</span><span class="st">/</span><span class="va">${samp}</span><span class="st">_sorted.bam</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true"></a><span class="st">  echo &quot;</span>Finished processing at <span class="va">$(</span><span class="fu">date</span><span class="va">)</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true"></a>  <span class="bu">echo</span> <span class="st">&quot;Created following files:&quot;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true"></a>  <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">ls</span> -othr <span class="va">$samp</span>/<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true"></a>  <span class="bu">echo</span> <span class="st">&quot;---------------------------------------------------------&quot;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true"></a><span class="kw">done</span> <span class="op">&lt;</span> <span class="va">$samps</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true"></a></span></code></pre></div>
+<p><br></p>
+<h3 id="create-sampnames-file">1.2 Create sampnames file</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="fu">ls</span> *.sam <span class="op">&gt;</span> sampnames</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="ex">vim</span> sampnames</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>:<span class="ex">%s</span>/\<span class="ex">.sam//g</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>:<span class="ex">wq</span></span></code></pre></div>
+<p>Now run the script</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">sbatch</span> bamsortidx.sh</span></code></pre></div>
+<p><br></p>
+<h3 id="check-alignment-stats">1.3 Check Alignment Stats</h3>
+<ul>
+<li>In the <code>mapped_reads</code> folder, there should be 33 sub-folders, one per sample. Each of these sub-folders should contain a file named <code>SAMPLE.alnStats</code>. Let’s look at one of them.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="fu">cat</span> SD_Field_1880/SD_Field_1880.alnStats</span></code></pre></div>
+<ul>
+<li>The most informative line in this output is the one that says: <code>Mapped reads:</code>. Let’s get that line for each sample.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="fu">find</span> . -name <span class="st">&#39;*.alnStats&#39;</span> -exec grep <span class="st">&quot;Mapped reads:&quot;</span> {} <span class="dt">\;</span></span></code></pre></div>
+<p><br><br><br></p>
+<h2 id="calling-snps">2. Calling SNPs</h2>
+<p>Our next step is identifying variants and recording them in variant call format. Assuming you are still in the <code>mapped_reads</code> folder, let’s create the following script:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">vim</span> callsnp.sh</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="co">#SBATCH -t 2:00:00</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1-1</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a><span class="co">#SBATCH --ntasks-per-node=16</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a><span class="co">#SBATCH -J SNPcall</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a><span class="co">#SBATCH --account=YOUR_PROJECT_NAME</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a><span class="co">## Load base modules</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a><span class="ex">module</span> load gcc swset</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true"></a><span class="co">## Load additional modules we need</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true"></a><span class="ex">module</span> load samtools bamtools</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true"></a><span class="co">## Create some output folders</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true"></a><span class="fu">mkdir</span> -p vcf bcf</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true"></a><span class="co">## Create file path shortcuts</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true"></a><span class="va">mapped=</span><span class="st">&quot;/path/to/your/mapped_reads_folder&quot;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true"></a><span class="co">## Shortcut to a file containing all sample names</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true"></a><span class="va">samps=</span><span class="st">&quot;</span><span class="va">$mapped</span><span class="st">/sampnames&quot;</span>  </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true"></a><span class="co">## Shortcut to the reference genome</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true"></a><span class="va">crovir=</span><span class="st">&quot;/project/inbre-train/2021_popgen_wkshp/data/CroVir_idx&quot;</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true"></a><span class="co">## Navigate to the target directory</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true"></a><span class="bu">cd</span> <span class="va">$mapped</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true"></a><span class="co">## Shortcut to a list of bam files. More on this soon..</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true"></a><span class="va">bamlist=</span><span class="st">&quot;</span><span class="va">$mapped</span><span class="st">/bamlist.txt&quot;</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true"></a></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true"></a><span class="co">## Begin script</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true"></a></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Current time is: </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Starting samtools mpileup&quot;</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true"></a></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true"></a><span class="ex">samtools</span> mpileup -t DP,AD -uf <span class="va">$crovir</span> --bam-list <span class="va">$bamlist</span> <span class="op">&gt;</span> bcf/CroVir.bcf</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Calling SNPs for All samples&quot;</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true"></a></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true"></a><span class="ex">bcftools</span> call --multiallelic-caller --variants-only --threads 16 -O z bcf/CroVir.bcf -o vcf/CroVir.vcf.gz</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true"></a></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Finished calling SNPs at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true"></a></span></code></pre></div>
+<p><br></p>
+<h3 id="create-a-list-of-bam-files">2.1 Create a List of BAM Files</h3>
+<p>Before running this script, we need to create a list of all BAM files. The list contains one BAM file per line with its complete path on the system, not just the relative path. We will use the find command again to first get partial paths.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a><span class="fu">find</span> . -name <span class="st">&quot;*_sorted.bam&quot;</span></span></code></pre></div>
+<p>This should list all BAM files with their path relative to where you are on the system. Send this list to a new file.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="fu">find</span> . -name <span class="st">&quot;*_sorted.bam&quot;</span> <span class="op">&gt;</span> bamlist.txt</span></code></pre></div>
+<p>We still need to complete the path. What is your current directory?</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="bu">pwd</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="ex">/gscratch/vchhatre/rattlesnake/mapped_reads</span></span></code></pre></div>
+<p>We need to prepend the pwd output in the bamlist file. First, open the bamlist file in vim:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">vim</span> bamlist.txt</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a>:<span class="ex">%s</span>/^/\/<span class="ex">gscratch</span>\/vchhatre\/rattlesnake\/mapped_reads\//g</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>:<span class="ex">wq</span></span></code></pre></div>
+<p>That should do it. If everything looks okay, go ahead and submit your job:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="ex">sbatch</span> callsnp.sh</span></code></pre></div>
+<p>If your script runs successfully, you should get <code>CroVir.vcf.gz</code> file in the <code>vcf</code> directory. We will briefly visit the Variant Call Format Specification in the next section.</p>
+</body>
+</html>
