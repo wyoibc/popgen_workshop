@@ -234,7 +234,7 @@
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true"></a></span>
 <span id="cb9-45"><a href="#cb9-45" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Starting bcftools mpileup&quot;</span></span>
 <span id="cb9-46"><a href="#cb9-46" aria-hidden="true"></a></span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true"></a><span class="ex">bcftools</span> mpileup --threads 16 -t DP,AD -f <span class="va">$crovir</span> --bam-list <span class="va">$bamlist</span> <span class="op">&gt;</span> bcf/CroVir.bcf</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true"></a><span class="ex">bcftools</span> mpileup --threads 16 -A -t DP,AD -f <span class="va">$crovir</span> --bam-list <span class="va">$bamlist</span> <span class="op">&gt;</span> bcf/CroVir.bcf</span>
 <span id="cb9-48"><a href="#cb9-48" aria-hidden="true"></a></span>
 <span id="cb9-49"><a href="#cb9-49" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;Calling SNPs for All samples&quot;</span></span>
 <span id="cb9-50"><a href="#cb9-50" aria-hidden="true"></a></span>

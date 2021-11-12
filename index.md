@@ -40,7 +40,7 @@ author: Wyoming INBRE Data Science Core
 
 ### 5. Site Filtering Using Popgen Criteria
 
-- [Week 3: HWE Filtering](hwe.html)
+- [Week 3: HWE Filtering]()
 
 ### 6. Population structure and inference of selection
 

@@ -231,7 +231,7 @@ echo "Current time is: $(date)"
 
 echo "Starting bcftools mpileup"
 
-bcftools mpileup --threads 16 -t DP,AD -f $crovir --bam-list $bamlist > bcf/CroVir.bcf
+bcftools mpileup --threads 16 -A -t DP,AD -f $crovir --bam-list $bamlist > bcf/CroVir.bcf
 
 echo "Calling SNPs for All samples"
 
