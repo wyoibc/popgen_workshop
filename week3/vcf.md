@@ -50,6 +50,7 @@ VCFTools is a very fast and wonderful program to parse and filter VCF files. Let
 
 
 ```bash
+module load swset gcc vcftools perl
 
 vcftools --gzvcf CroVir.vcf.gz
 

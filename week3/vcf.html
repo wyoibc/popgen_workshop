@@ -16,6 +16,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -90,12 +91,12 @@
 <p>The current version of VCF is 4.3. However, your files are likely formatted to version 4.1 because that’s the version available on Teton. The VCF format specification has an extensive manual <a href="https://samtools.github.io/hts-specs/VCFv4.3.pdf">available here</a>.</p>
 <h2 id="vcf-header">1. VCF Header</h2>
 <p>The header is usually quite large and contains definitions of each field. The most important header line is the one that starts with <code>#CHROM</code>. Let’s look at it.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="fu">zgrep</span> <span class="st">&quot;#CHROM&quot;</span> vcf/CroVir.vcf.gz <span class="op">&gt;</span> vcf.header</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="ex">vim</span> vcf.header</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>:<span class="ex">%s</span>/\<span class="ex">t//g</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">zgrep</span> <span class="st">&quot;#CHROM&quot;</span> vcf/CroVir.vcf.gz <span class="op">&gt;</span> vcf.header</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> vcf.header</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">:%s/\t//g</span></span></code></pre></div>
 <p>We first sent the header to a text file and then replaced all tabs with line breaks so the file is easier to read.</p>
 <p><br><br></p>
 <h2 id="the-format-field">2. The FORMAT Field</h2>
@@ -110,25 +111,26 @@
 <h2 id="using-vcftools">3. Using VCFTools</h2>
 <p>VCFTools is a very fast and wonderful program to parse and filter VCF files. Let’s run a few examples of what this program can do:</p>
 <h3 id="summarize-vcf-files">3.1 Summarize VCF Files</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">vcftools</span> --gzvcf CroVir.vcf.gz</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load swset gcc vcftools perl</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">vcftools</span> <span class="at">--gzvcf</span> CroVir.vcf.gz</span></code></pre></div>
 <h3 id="filter-loci">3.2 Filter Loci</h3>
 <ul>
 <li>Keep only biallelic sites</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">vcftools</span> --gzvcf CroVir.vcf.gz --min-alleles 2 --max-alleles 2</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vcftools</span> <span class="at">--gzvcf</span> CroVir.vcf.gz <span class="at">--min-alleles</span> 2 <span class="at">--max-alleles</span> 2</span></code></pre></div>
 <ul>
 <li>Get allele frequency table</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">vcftools</span> --gzvcf CroVir.vcf.gz --freq</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vcftools</span> <span class="at">--gzvcf</span> CroVir.vcf.gz <span class="at">--freq</span></span></code></pre></div>
 <ul>
 <li>Keep sites for only Chromosome #2</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">vcftools</span> --gzvcf CroVir.vcf.gz --chr 2</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vcftools</span> <span class="at">--gzvcf</span> CroVir.vcf.gz <span class="at">--chr</span> 2</span></code></pre></div>
 <ul>
 <li>Thin your dataset to reduce linkage disequilibrium (20Kbp)</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">vcftools</span> --gzvcf CroVir.vcf.gz --thin 20000</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vcftools</span> <span class="at">--gzvcf</span> CroVir.vcf.gz <span class="at">--thin</span> 20000</span></code></pre></div>
 </body>
 </html>
