@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Sean Harrington &amp; Vikram Chhatre" />
+  <meta name="dcterms.date" content="2021-11-19" />
+  <title>Population assignment in R</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Population assignment in R</h1>
+<p class="author">Sean Harrington &amp; Vikram Chhatre</p>
+<p class="date">November 19, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#rstudio-on-teton">1. RStudio on Teton</a></p></li>
+<li><p><a href="#rstudio-setup">2. RStudio setup</a></p></li>
+<li><p><a href="#discriminant-analysis-of-principal-components">3. Discriminant analysis of principal components</a></p></li>
+<li><p><a href="#isolation-by-distance">4. Isolation by distance</a></p></li>
+<li><p><a href="#snmf">5. sNMF</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="rstudio-on-teton">1. RStudio on Teton</h2>
+<p>We’ll now use some methods in R to further explore the population structure in our data. There a few different ways to run R code on Teton. The simplest is to simply load up an R module in a regular Teton session and use it as an interactive terminal. Another way is to create an R script, then execute that script with the Rscript command on Teton. Finally, you can RStudio to simultaneously develop a script and execute code simultaneously. This final option is by far my preferred method unless I already have a script that I am confident will run without errors and without interactive input or tuning or if my computational needs exceed the resources currently allocated for RStudio on Teton.</p>
+<p>To do this we’ll use the new and super cool SouthPass interface that ARCC has recently made available. You can access SouthPass at <strong><a href="https://southpass.arcc.uwyo.edu">https://southpass.arcc.uwyo.edu</a></strong>. This will take you to a Wyo Login page, use your regular UW username and password to log in.</p>
+<p>This should taker you to a screen that includes options that look like this:</p>
+<center>
+<img src="SouthPass_apps.png" width=500 />
+</center>
+<p>These are various ways to interface with Teton. We won’t get into what these all do, today we’ll just use <code>Teton Xfce Desktop</code>. When you click on that icon, it will take you to a page that asks you to specify your project/account (this is the project that you put in when run an <code>salloc</code> session or in a slurm joib script).</p>
+<p>We’ll select <code>2 hours</code> and <code>2 CPU, 8GB memory</code> for our Desktop Configuration.</p>
+<p>Then click launch. This should start quickly (hopefully the system is brand new, so we’ll be some of the first testers running several sessions at once). This will go to a new page that will show the job as queued briefly, then you should see the option <code>Launch Teton Xfce Desktop</code> show up. Click that to start the session.</p>
+<p>This will start up an interactive desktop session. This will look like a standard desktop, but you are running on a Teton compute node. To start up RStudio, open up the terminal emulator (either in the bottom bar or Applications in the top right)</p>
+<p>In the terminal emulator, load the RStudio module and then start up RStudio</p>
+<pre><code>module load swset gcc r/4.0.5-py27 rstudio/1.4.1106
+rstudio &amp;</code></pre>
+<p>The <code>&amp;</code> will push the RStudio process to the background so that we can continue to type other commands into the terminal while RStudio is running. You should now have an open RStudio window. This will look just like RStudio would on your local computer.</p>
+<h2 id="rstudio-setup">2. RStudio setup</h2>
+<p>As is typical, let’s start by making sure we know where our files are. We’ll use the output from ipyrad. To make sure everyone is on the same page, let’s all copy over the files again. Copy these to wherever you want (gscratch or your project directory) and keep track of the path to these files, we’ll need this path inside of R.</p>
+<p>In a Teton terminal, either the terminal inside your SouthPass session or a regular Teton session, navigate to where you want to have the data and run:</p>
+<pre><code>cp -r /project/inbre-train/2021_popgen_wkshp/week_1_ipyrad_output/ipyrad_out/ruber_reduced_ref_outfiles .</code></pre>
+<p>This directory also has the localities file that we will need.</p>
+<p>From here on, we’ll work in RStudio. Go back to your RStudio window and open up a new R script:</p>
+<center>
+<img src="r_new_script.png" width=500 />
+</center>
+<p>Use the same file menu to save the file as whatever you’d like, I’ll save mine as <code>ruber_popstruct.R</code>. You should now have 4 panes in your RStudio session, a script, a terminal, and two other panes that include a file navigator, environment viewer, plot viewer, etc. We don’t have time to get into all of the features of RStudio now, but it’s a very useful tool.</p>
+<p>We’re now ready to start scripting in R. We’ll enter all of our code into the script so that we can save everything. We can then run the code from the script by hitting <code>ctrl+enter</code> or <code>command+enter</code> on the line we want to run or on a whole block of code that we select. We can also use the <code>Run</code> button at the top of the script window instead of <code>ctrl+enter</code> or <code>command+enter</code>.</p>
+<p>Let’s start by installing the packages that we will need.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;adegenet&quot;</span>, <span class="st">&quot;plotrix&quot;</span>, <span class="st">&quot;mapdata&quot;</span>, <span class="st">&quot;rworldmap&quot;</span>, <span class="st">&quot;BiocManager&quot;</span>, <span class="st">&quot;vcfR&quot;</span>, <span class="st">&quot;fossil&quot;</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&quot;LEA&quot;</span>)</span></code></pre></div>
+<p>This may take a minute or two. Once that’s done, we can load up the packages.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load up relevant packages</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(adegenet)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LEA)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotrix)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mapdata)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rworldmap)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vcfR)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fossil)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div>
+<p>Then we will specify a number of file paths and read in a few files so that we don’t have to repeatedly hardcode file paths farther down in the script. This makes it easier to reuse the script on different datasets or the same data with different filtering schemes without having to search through the script for every time an absolute file path is specified.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Set up an object containing the path to the data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;/home/sharrin2/inbreh/2021_10_popgen_wkshp/week4_dev/ruber_reduced_ref_outfiles&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(data_dir) <span class="co"># set that as our working directory</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="do">## make a directory to put the output plots into</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="do">##    this can be wherever you like, I&#39;m putting it into the directory that contains</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    my ruber_reduced_ref_outfiles directory</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>out_dir<span class="ot">&lt;-</span><span class="st">&quot;/home/sharrin2/inbreh/2021_10_popgen_wkshp/week4_dev/Pop_structr_out&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(out_dir)){ <span class="co"># check if the directory  exists</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(out_dir)   <span class="co"># and create it if it does not</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up an object that contains the base file name of files in the output directory. </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#    Data files are all this basename with varying extensions</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#  we won&#39;t call this &#39;basename&#39; because that is a function in R</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>basefile <span class="ot">&lt;-</span> <span class="st">&quot;ruber_reduced_ref&quot;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in the coordinates for plotting later</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>coords<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">&quot;Localities.csv&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">row.names=</span><span class="cn">NULL</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="do">####################################################################################</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="do">## Set up paths to input files using the base file name specified above</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="do">####################################################################################</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>path_ugeno<span class="ot">&lt;-</span><span class="fu">paste0</span>(data_dir,<span class="st">&quot;/&quot;</span>, basefile,<span class="st">&quot;.ugeno&quot;</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>path_ustr<span class="ot">&lt;-</span><span class="fu">paste0</span>(data_dir,<span class="st">&quot;/&quot;</span>, basefile,<span class="st">&quot;.ustr&quot;</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>path_vcf<span class="ot">&lt;-</span><span class="fu">paste0</span>(data_dir,<span class="st">&quot;/&quot;</span>, basefile,<span class="st">&quot;.vcf&quot;</span>)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="do">### Set up some colors for plotting farther down</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>colors_2<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>) <span class="co"># colors for plotting 2 populations</span></span></code></pre></div>
+<h2 id="discriminant-analysis-of-principal-components">3. Discriminant analysis of principal components</h2>
+<p>We’re now ready to start reading in the data and analyzing it. We’ll start with discriminant analysis of principal components, or DAPC, a method of classifying individuals into clusters that does not include any explicit population genetic model.</p>
+<p>We’ll use the unlinked Structure-formatted file for this, but because Structure-formatted files can come in a variety of different configurations, we need to tell the function how many individuals and loci are present in the file. The easiest way I’ve so far come up with to do this is to first read in the <code>ugeno</code> file and use the dimensions of that file to get the number of individuals and snps.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the geno file to get the number of individuals and snps for this assemblydon&#39;t </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>geno_txt<span class="ot">&lt;-</span><span class="fu">readLines</span>(path_ugeno)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>nums_snps<span class="ot">&lt;-</span><span class="fu">length</span>(geno_txt) <span class="co"># the number of lines is the number of loci</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>num_ind<span class="ot">&lt;-</span><span class="fu">length</span>(<span class="fu">strsplit</span>(geno_txt[[<span class="dv">1</span>]], <span class="st">&quot;&quot;</span>)[[<span class="dv">1</span>]]) <span class="co"># the number of columns is the number of</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>     <span class="co"># individuals - here we split apart the first line into individual characters and</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>     <span class="co"># count the length</span></span></code></pre></div>
+<p>Then we can read in the Structure file.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A quirk of read.structure function is that it requires the strucure file to have the</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#     file extension &quot;.stru&quot; - do some copying to make a new file with this extension</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a regular expression substitution to generate the new file name</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>path_stru<span class="ot">&lt;-</span><span class="fu">gsub</span>(<span class="st">&quot;.ustr&quot;</span>, <span class="st">&quot;.stru&quot;</span>, path_ustr)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(path_ustr, path_stru) <span class="co"># make a copy of the file with the new name</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can finally read in this file</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>DAPC_ustr<span class="ot">&lt;-</span><span class="fu">read.structure</span>(path_stru, <span class="at">n.ind=</span>num_ind, <span class="at">n.loc=</span>nums_snps, <span class="at">onerowperind =</span> <span class="cn">FALSE</span>, <span class="at">col.lab=</span><span class="dv">1</span>, <span class="at">col.pop=</span><span class="dv">0</span>, <span class="at">NA.char=</span><span class="st">&quot;-9&quot;</span>, <span class="at">pop=</span><span class="cn">NULL</span>, <span class="at">ask=</span><span class="cn">FALSE</span>, <span class="at">quiet=</span><span class="cn">FALSE</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the individual names in the order that they show up in the various files - this is</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># important farther down for getting coordinates into the right order for plotting</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>ind_names<span class="ot">&lt;-</span><span class="fu">rownames</span>(DAPC_ustr<span class="sc">@</span>tab)</span></code></pre></div>
+<p>Take a quick look at how the data is structured for Adegenet</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>DAPC_ustr</span></code></pre></div>
+<p>Now we can run DAPC. We start by determining how many clusters we want to use. We’ll test up to 8 clusters, which should be overkill. If the best fit turned out to be 8, we’d want to expand our maximum number of clusters to ensure that we aren’t artificially limiting the number of clusters that our data can fall into.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>grp <span class="ot">&lt;-</span> <span class="fu">find.clusters</span>(DAPC_ustr, <span class="at">max.n.clust=</span><span class="dv">8</span>)</span></code></pre></div>
+<p>This will first spit out a plot of variance by each principle component in the PCA transformation of the data. We want to retain all PCs up to the point at which the cumulative variance plateaus. There is no clear plateau here, so we’ll retain all PCs, which is 32 here.</p>
+<center>
+<img src="pc_variance.png" width=500 />
+</center>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span> <span class="co"># this has to be entered into the R terminal</span></span></code></pre></div>
+<p>We are then asked how many clusters we want to retain, with the fit of each number of clusters estimated by Bayesian information criterion. Here, 2 clusters is clearly a much better fit (lower BIC) than any other values.</p>
+<center>
+<img src="num_clust.png" width=500 />
+</center>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span>  <span class="co"># again enter this into the R terminal, not the script </span></span></code></pre></div>
+<p>Note that in some cases, the number of clusters will not be as clear, and you will have to look for an inflection point of where there is the sharpest decrease in BIC as clusters increase rather than the single cluster with the lowest BIC.</p>
+<p>The grp object now contains the groupings of these individuals into the 2 clusters we decided one, and we can use the function dapc to describe these groups.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dapc1 <span class="ot">&lt;-</span> <span class="fu">dapc</span>(DAPC_ustr, grp<span class="sc">$</span>grp) <span class="co"># run DAPC</span></span></code></pre></div>
+<p>We will again get asked how many PCs to retain, and we’ll specify 32 again.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code></pre></div>
+<p>We will then be asked how many discriminant functions to retain. With only 2 groups, only 1 is possible, and we’ll select 1.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span></span></code></pre></div>
+<p>We can now use our <code>dapc1</code> object to plot out our confidence in assigning individuals to each of the groups.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## plot the DAPC the ugly way</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter</span>(dapc1, <span class="at">col=</span>colors_2,  <span class="at">bg=</span><span class="st">&quot;white&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend=</span><span class="cn">FALSE</span>, <span class="at">posi.da =</span> <span class="st">&quot;bottomright&quot;</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">solid=</span>.<span class="dv">5</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># another way</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">assignplot</span>(dapc1)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># bar chart</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">compoplot</span>(dapc1, <span class="at">posi=</span><span class="st">&quot;bottomright&quot;</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">txt.leg=</span><span class="fu">paste</span>(<span class="st">&quot;Cluster&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(grp<span class="sc">$</span>size)), <span class="at">lab=</span><span class="st">&quot;&quot;</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">n.col=</span><span class="dv">1</span>, <span class="at">xlab=</span><span class="st">&quot;individuals&quot;</span>)</span></code></pre></div>
+<p>None of these plots mean too much to me, other than showing that we have very little uncertainty about which cluster each individual falls into. We could add the individual IDs to the bottom of that last plot, but I can’t keep track of which individual is from where, and I really want to know what the spatial pattern looks like. To do this, let’s plot it out to a map.</p>
+<p>We’ll first do a little processing of the coordinates (remember that we read these into R earlier) to make sure that the coordinates are in the right order and that every individual we want to plot has locality data.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## make sure there aren&#39;t any individuals that don&#39;t have coordinates</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ind_names[<span class="fu">which</span>(<span class="sc">!</span>ind_names <span class="sc">%in%</span> coords[,<span class="st">&quot;Field.No.&quot;</span>])]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># match up the coordinates to the order of the individuals from genetic data</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>match_coords<span class="ot">&lt;-</span><span class="fu">match</span>(ind_names, coords[,<span class="st">&quot;Field.No.&quot;</span>])</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>coords<span class="ot">&lt;-</span>coords[match_coords,]</span></code></pre></div>
+<p>Then we can plot out a map</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot out the map</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>),<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;usa&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>), <span class="at">add=</span><span class="cn">TRUE</span>,<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p>and add on pie charts showing the probability of membership in each cluster for each sample</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot pies at each locality</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (x <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(coords)) {<span class="fu">floating.pie</span>(coords<span class="sc">$</span>Longitude[x],coords<span class="sc">$</span>Latitude[x],</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(dapc1<span class="sc">$</span>posterior[x,<span class="dv">1</span>], dapc1<span class="sc">$</span>posterior[x,<span class="dv">2</span>]), <span class="at">radius=</span><span class="fl">0.1</span>, <span class="at">col=</span>colors_2)}</span></code></pre></div>
+<p>This doesn’t look awesome in the RStudio plot viewer, but will look much better if we write it to a pdf:</p>
+<p>setwd(out_dir) # set the working directory to where we want to write the output</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">file=</span><span class="st">&quot;DAPC_Map.pdf&quot;</span>, <span class="at">width=</span><span class="dv">10</span>, <span class="at">height=</span><span class="dv">10</span>) <span class="co"># open the pdf plotting device</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot out the map</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>),<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;usa&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>), <span class="at">add=</span><span class="cn">TRUE</span>,<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot pies at each locality</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (x <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(coords)) {<span class="fu">floating.pie</span>(coords<span class="sc">$</span>Longitude[x],coords<span class="sc">$</span>Latitude[x], </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(dapc1<span class="sc">$</span>posterior[x,<span class="dv">1</span>], dapc1<span class="sc">$</span>posterior[x,<span class="dv">2</span>]), <span class="at">radius=</span><span class="fl">0.2</span>, <span class="at">col=</span>colors_2)}</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>() <span class="co"># close the pdf plotting device</span></span></code></pre></div>
+<p>This should look nice. We can see a very clear genetic break in southern Baja California. However, because this is a classification problem and isn’t explicitly modeling admixture, we only see the confidence with which each sample is assigned to each cluster. I.e., this does not indicate that there is no evidence of admixture among populations. Our results from Structure will show us that. We can also use the method sNMF, which is included at the end of this tutorial, but that we will most likely not get to go through as a group.</p>
+<center>
+<img src="dapc_map.png" width=500 />
+</center>
+<h2 id="isolation-by-distance">4. Isolation by distance</h2>
+<p>As we mentioned at the end of last week, if isolation by distance (IBD) exists in our dataset, programs that seek to cluster individuals but do not model continuous spatial structure can be positively misled by IBD. This can result in overestimating the number of population clusters, potentially identifying discrete population structure when no such structure exists. We mentioned that the method conStruct can explicitly model both processes, but can be finicky to run and have long run times.</p>
+<p>Here, we’ll do a quick test and visualization of isolation by distance to try to determine if IBD is misleading our population structure analyses.</p>
+<p>We need our data in a different format, so we’ll start by reading in our vcf file.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>gendata_all<span class="ot">&lt;-</span><span class="fu">read.vcfR</span>(path_vcf) <span class="co"># read in all of the genetic data</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>gendata<span class="ot">&lt;-</span><span class="fu">vcfR2genlight</span>(gendata_all) <span class="co"># make the genetic data a biallelic matrix of alleles in genlight format</span></span></code></pre></div>
+<p>We’ll start off by running a Mantel test, which correlates two different distance matrices. We’ll need to convert our DNA and geographic data into pairwise distances for this test:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Dgen<span class="ot">&lt;-</span><span class="fu">dist</span>(gendata) <span class="co"># get the genetic distances</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>Dgeo<span class="ot">&lt;-</span><span class="fu">earth.dist</span>(coords[,<span class="fu">c</span>(<span class="st">&quot;Longitude&quot;</span>, <span class="st">&quot;Latitude&quot;</span>)]) <span class="co"># get the geographic distances</span></span></code></pre></div>
+<p>Then run the test:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ibd<span class="ot">&lt;-</span><span class="fu">mantel.randtest</span>(Dgen,Dgeo) <span class="co"># run the mantel test</span></span></code></pre></div>
+<p>We can then visualize the result of our empirical estimate of isolation by distance compared to a permuted null distribution to see how significant our result is. We’ll also plot out a kernel density plot of genetic vs. geographic distances to visualize how these distances are associated.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="do">## PDF of mantel output and a kernel density plot of genetic vs. geograophic distance</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">file=</span><span class="st">&quot;Mantel_KD.pdf&quot;</span>, <span class="at">width=</span><span class="dv">8</span>, <span class="at">height=</span><span class="dv">8</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ibd, <span class="at">main=</span><span class="fu">paste0</span>(<span class="st">&quot;mantel p = &quot;</span>, ibd<span class="sc">$</span>pvalue)) <span class="co"># plot out the IBD significance</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="do">## make kernel density plot of genetic and geographic distances</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>dens <span class="ot">&lt;-</span> <span class="fu">kde2d</span>(<span class="fu">as.numeric</span>(Dgeo),<span class="fu">as.numeric</span>(Dgen), <span class="at">n=</span><span class="dv">300</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>myPal <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">&quot;white&quot;</span>,<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;gold&quot;</span>, <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;red&quot;</span>))</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Dgeo, Dgen, <span class="at">pch=</span><span class="dv">20</span>,<span class="at">cex=</span>.<span class="dv">5</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">image</span>(dens, <span class="at">col=</span><span class="fu">transp</span>(<span class="fu">myPal</span>(<span class="dv">300</span>),.<span class="dv">7</span>), <span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">lm</span>(<span class="fu">as.numeric</span>(Dgen)<span class="sc">~</span><span class="fu">as.numeric</span>(Dgeo)))</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="st">&quot;IBD plot&quot;</span>)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<p>This will make a 2-page pdf of these plots. Looking at the first page, we can see that we have highly significant isolation by distance, with the lowest possible significance value given our number of permutations in the Mantel test (999 by default). The diamond-shaped point with the line indicates our empirical estimate, with the permutations shown as the gray histogram.</p>
+<center>
+<img src="mantel.png" width=500 />
+</center>
+<p>If we look at the second page, we can see how the geographic and genetic distances are correlated. What we see is a positive relationship, but with a major disjunction. This type of disjunction indicates the presence of some level of not fully continuous spatial genetic structure.</p>
+<center>
+<img src="kd.png" width=500 />
+</center>
+<p>If we had only pure IBD, we would expect a single, roughly linear cloud of points. We won’t reproduce this here, but when looking at only the northern population, we find a pattern that looks much more like pure IBD.</p>
+<center>
+<img src="kd_north_.png" width=500 />
+</center>
+<p>These plots can help reassure us that there is IBD in the data, but some kind of discrete structure across the whole species, which is what we are detecting with DAPC, etc., but no further discrete structure within the northern population.</p>
+<h2 id="snmf">5. sNMF</h2>
+<p>It is unlikely that we will have time to cover this together, but I’m including it here for reference because my preferred method of population clustering is to use a combination of sNMF and DAPC. I like to use sNMF rather than Structure because it’s very fast and produces results highly similar to Structure. sNMF can have trouble with samples that have high amounts of missing data, though, with high missing data causing individuals to appear to be admixed. In such cases, the estimates of admixture that you get out of Structure or Admixture may be better than those from sNMF.</p>
+<p>The snmf function requires a <code>geno</code> file as input, and requires that it has the extension <code>.geno</code>. We want to use only unlinked SNPs here (i.e., 1 SNP per RAD locus, assumed to be unlinked), and the geno file of unlinked snps has the extension <code>ugeno</code>, so we’ll copy the file and give it a new extension:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a regular expression substitution to generate the new file name</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>path_geno<span class="ot">&lt;-</span><span class="fu">gsub</span>(<span class="st">&quot;.ugeno&quot;</span>, <span class="st">&quot;.u.geno&quot;</span>, path_ugeno)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(path_ugeno, path_geno) <span class="co"># do the copying with the new name</span></span></code></pre></div>
+<p>Now we’re ready to run sNMF. We’ll run this using 1 to 10 possible ancestral populations and evaluate the fit of these different numbers of populations (referred to as k values) to the data using the cross entropy criterion.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>obj.at <span class="ot">&lt;-</span> <span class="fu">snmf</span>(<span class="at">input.file =</span> path_geno,  <span class="co"># input file is the .geno format file</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">K =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="co"># we will test for k=1 through 10</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">ploidy =</span> <span class="dv">2</span>, </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">entropy =</span> T, <span class="co"># use the cross entropy criterion for assessing the best k </span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">repetitions =</span> <span class="dv">10</span>, <span class="co"># Run 10 independent replicate analyses</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">CPU =</span> <span class="dv">2</span>, </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">project =</span> <span class="st">&quot;new&quot;</span>, <span class="at">tolerance =</span> <span class="fl">0.00001</span>, <span class="at">iterations =</span> <span class="dv">500</span>)</span></code></pre></div>
+<p>Let’s make a pdf of the cross-entropy plot</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">&quot;snmf_cross_ent.pdf&quot;</span>, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height=</span><span class="dv">5</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(obj.at, <span class="at">col =</span> <span class="st">&quot;lightblue&quot;</span>, <span class="at">cex =</span> <span class="fl">1.2</span>, <span class="at">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div>
+<p>As for DAPC, the best fit model is one with 2 populations, as shown by the lowest cross-entropy score. We can also look at a numeric summary of this result:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>outstats <span class="ot">&lt;-</span> <span class="fu">summary</span>(obj.at)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>outstats</span></code></pre></div>
+<p>We can also confirm cross entropy values for K are consistent across runs and get the single best run for K=2.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ce <span class="ot">&lt;-</span> <span class="fu">cross.entropy</span>(obj.at, <span class="at">K =</span> <span class="dv">2</span>) </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ce <span class="co"># pretty similar</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>best.run <span class="ot">&lt;-</span> <span class="fu">which.min</span>(ce) <span class="co"># find the run with the lowest cross validation error</span></span></code></pre></div>
+<p>Then we can get the snmf Q matrix from the best run at the best k, which is a matrix of the proportion of ancestry that each sample derives from each population.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>qmatrix <span class="ot">&lt;-</span> <span class="fu">Q</span>(obj.at, <span class="at">K =</span> <span class="dv">2</span>, <span class="at">run =</span> best.run)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>admix<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(qmatrix)</span></code></pre></div>
+<p>And finally we can plot this out onto a map like we did for our DAPC results:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="at">file=</span><span class="st">&quot;sNMF_Map.pdf&quot;</span>, <span class="at">width=</span><span class="dv">10</span>, <span class="at">height=</span><span class="dv">10</span>) <span class="co"># open the pdf plotting device</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot out the map</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>),<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="st">&quot;worldHires&quot;</span>, <span class="st">&quot;usa&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">118</span>,<span class="sc">-</span><span class="dv">109</span>), <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">22</span>,<span class="dv">34</span>), <span class="at">add=</span><span class="cn">TRUE</span>,<span class="at">col=</span><span class="st">&quot;gray90&quot;</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot pies at each locality</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (x <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(coords)) {<span class="fu">floating.pie</span>(coords<span class="sc">$</span>Longitude[x],coords<span class="sc">$</span>Latitude[x],</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">c</span>(admix<span class="sc">$</span>V1[x],admix<span class="sc">$</span>V2[x], admix<span class="sc">$</span>V3[x]), <span class="at">radius=</span><span class="fl">0.2</span>, <span class="at">col=</span>colors_2)}</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>() <span class="co"># close the pdf plotting device</span></span></code></pre></div>
+<center>
+<img src="snmf.png" width=500 />
+</center>
+<p>The majority population membership matches up with what we saw from DAPC, but we are now able to see the admixture present where the populations contact each other.</p>
+</body>
+</html>
