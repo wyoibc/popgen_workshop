@@ -52,7 +52,12 @@ mv trimmed_MCB_284.fastq.gz trimmed_DGM_258.fastq.gz trimmed_TWR_747.fastq.gz \
 <p>Now that we have demultiplexed and cleaned our data, we are reading for read mapping. Read mapping is the process of taking each read from our FASTQ files and identifying which segment of the genome they correspond to. This is done by finding the sequence of a reference genome that matches up to the read in question. This approach can be used to map reads from reduced representation library approaches like we’re using here, as well as for mapping reads from whole genome sequencing runs.</p>
 <p>When using a read mapping approach, it is key that you have a relatively closely related genome to map your reads to. If your reference genome if too diverged from your species of interest, then your reads may not map well due to accumulation of too many mutations between species, making it difficult for the read mapping program to match up the reads to the genome. As divergence between species increases, you also increase the probability of gene gains, losses, and rearrangements that further interfere with accurate mapping. If you do not have a closely related genome, de novo methods that do not rely on a reference genome will often be preferable. These include programs like iPyRAD and Stacks for RAD data, or SOAPdenovo2, ABySS, or several other alternatives for whole genomes.</p>
 <p>Here we will use <a href="http://bio-bwa.sourceforge.net/">BWA (Burrows-Wheeler Aligner)</a>, one of the most common read mapping programs. We will need the reference genome in addition to our trimmed FASTQ files, let’s copy that over to where we’ll want to work.</p>
-<pre><code>cp /project/inbre-train/2021_popgen_wkshp/data/GCA_003400415.2_UTA_CroVir_3.0_genomic.fna .</code></pre>
+<pre><code># If you are currently in your trimmed_reads directory, move one directory up from that
+#  cd ..
+# We want to be in the directory that contains the trimmed reads directory, not
+#  the trimmed reads directory itself 
+
+cp /project/inbre-train/2021_popgen_wkshp/data/GCA_003400415.2_UTA_CroVir_3.0_genomic.fna .</code></pre>
 <p>Note that our file organization isn’t great here, and I would not work in increasingly nested directories like we are now on my own data. This is just to try to avoid losing track of everyone’s file paths. I would structure this as a single directory for the entire project, with a subdirectory inside of that for each major step. E.g., an overall <code>cruber</code> directory that contains directories like <code>demux</code>, <code>trim</code>, <code>mapping</code>, etc. Since we all have different file paths, it’s trickier to keep everyone on the same page if we have to continuously point to other file paths, though.</p>
 <p>The first step in running BWA is to index the genome. This effectively preprocesses the reference genome and makes it much faster to search, analogous to adding an index to a book. This took me &gt; 20 minutes to run, so I’ve included the code to run this below (commented out), but for the sake of time, and because this is a simple command to run, we’ll copy the indexed genome files that I prepared.</p>
 <p>Commands to index:</p>
@@ -61,8 +66,15 @@ mv trimmed_MCB_284.fastq.gz trimmed_DGM_258.fastq.gz trimmed_TWR_747.fastq.gz \
 # bwa index -p CroVir_idx GCA_003400415.2_UTA_CroVir_3.0_genomic.fna</code></pre>
 <p>The <code>-p</code> flag gives a prefix for out indexed database.</p>
 <p>Commands to copy over the index files to the current directory:</p>
-<pre><code>cp /project/inbre-train/2021_popgen_wkshp/data/CroVir_idx* .</code></pre>
+<pre><code># As above, we want to be in the directory that contains the trimmed reads directory, 
+#   not the trimmed reads directory itself , check that you are in the correct directory
+#   first
+
+cp /project/inbre-train/2021_popgen_wkshp/data/CroVir_idx* .</code></pre>
 <p>Once we have the index files, we can go ahead and run BWA on each of our fastq files. We’ll set this up as a job array, as we did for running trimmomatic on all samples.</p>
+<p>Create the file in you favorite text editor:</p>
+<pre><code>nano bwa.slurm</code></pre>
+<p>and write the following script into it:</p>
 <pre><code>#!/bin/bash
 
 #SBATCH --job-name BWA
@@ -108,6 +120,8 @@ outname=${base%.fastq.gz}.sam
 
 # Run bwa on each file using the mem algorithm
 bwa mem -t 6 CroVir_idx $sample &gt; $outname</code></pre>
+<p>Then submit the job:</p>
+<pre><code>sbatch bwa.slurm</code></pre>
 <p>This should run VERY quickly as long as we don’t run into issues with job allocations. As we have noted before, the data here are fairly small, so don’t necessarily expect such short run times with larger datasets, particularly as you get into whole genomes.</p>
 <p>That will generate a lot of err and std_out files, let’s clean those up a bit and move our sam files to a new subdirectory.</p>
 <pre><code>mkdir errs_outs_bwa

@@ -62,6 +62,11 @@ When using a read mapping approach, it is key that you have a relatively closely
 Here we will use [BWA (Burrows-Wheeler Aligner)](http://bio-bwa.sourceforge.net/), one of the most common read mapping programs. We will need the reference genome in addition to our trimmed FASTQ files, let's copy that over to where we'll want to work.
 
 ```
+# If you are currently in your trimmed_reads directory, move one directory up from that
+#  cd ..
+# We want to be in the directory that contains the trimmed reads directory, not
+#  the trimmed reads directory itself 
+
 cp /project/inbre-train/2021_popgen_wkshp/data/GCA_003400415.2_UTA_CroVir_3.0_genomic.fna .
 ```
 
@@ -84,11 +89,22 @@ Commands to copy over the index files to the current directory:
 
 
 ```
+# As above, we want to be in the directory that contains the trimmed reads directory, 
+#   not the trimmed reads directory itself , check that you are in the correct directory
+#   first
+
 cp /project/inbre-train/2021_popgen_wkshp/data/CroVir_idx* .
 ```
 
 Once we have the index files, we can go ahead and run BWA on each of our fastq files. We'll set this up as a job array, as we did for running trimmomatic on all samples.
 
+Create the file in you favorite text editor:
+
+```
+nano bwa.slurm
+```
+
+and write the following script into it:
 
 ```
 #!/bin/bash
@@ -136,6 +152,12 @@ outname=${base%.fastq.gz}.sam
 
 # Run bwa on each file using the mem algorithm
 bwa mem -t 6 CroVir_idx $sample > $outname
+```
+
+Then submit the job:
+
+```
+sbatch bwa.slurm
 ```
 
 This should run VERY quickly as long as we don't run into issues with job allocations. As we have noted before, the data here are fairly small, so don't necessarily expect such short run times with larger datasets, particularly as you get into whole genomes.
