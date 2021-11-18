@@ -44,7 +44,7 @@ author: Wyoming INBRE Data Science Core
 
 - [Week 4: Admixture Analysis](week4/Structure/structure.html)
 
-- [Week 5: DAPC & snmf Analysis](week4/DAPC_snmf/dapc_ibd_snmf.html)
+- [Week 4: DAPC & snmf Analysis](week4/DAPC_snmf/dapc_ibd_snmf.html)
 
 
 
