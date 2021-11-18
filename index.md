@@ -38,14 +38,13 @@ author: Wyoming INBRE Data Science Core
 - [Week 3: Variant Call Format (VCF)](week3/vcf.html)
 
 
-### 5. Site Filtering Using Popgen Criteria
-
-- [Week 3: HWE Filtering]()
-
-### 6. Population structure and inference of selection
+### 5. Population structure and inference of selection
 
 - [Week 3: Overview of structure and selection](week3/popstruct_selec_overview.html)
 
+- [Week 4: Admixture Analysis](week4/Structure/structure.html)
+
+- [Week 5: DAPC & snmf Analysis](week4/DAPC_snmf/dapc_ibd_snmf.html)
 
 
 

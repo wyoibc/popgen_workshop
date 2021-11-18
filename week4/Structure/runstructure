@@ -1,0 +1,36 @@
+#!/bin/bash
+#SBATCH --time=8:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=16
+#SBATCH --mem=100G
+#SBATCH --mail-type=NONE
+#SBATCH -J admix
+#SBATCH --account=YOUR_PROJECT
+
+module load gcc swset parallel
+
+mkdir results_f log harvester
+mkdir k1
+mkdir k2
+mkdir k3
+mkdir k4
+
+cd log
+mkdir k1
+mkdir k2
+mkdir k3
+mkdir k4
+
+cd ..
+
+cat structureCommands | parallel -j 16
+
+mv k1 k2 k3 k4  results_f/
+mkdir harvester_input
+cp results_f/k*/*_f harvester_input
+echo 'Your structure run has finished.'
+#Clean up harvester input files.
+zip ruber_Harvester_Upload.zip harvester_input/*
+mv ruber_Harvester_Upload.zip harvester/
+rm -rf harvester_input
+

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2021-11-12" />
+  <title>Admixture Analysis</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Admixture Analysis</h1>
+<p class="date">November 12, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#preparing-input-file">1. Preparing Input File</a></p></li>
+<li><p><a href="#parallelizing-structure">2. Parallelizing Structure</a></p></li>
+<li><p><a href="#processing-output">3. Running Structure and Processing Output</a></p></li>
+<li><p><a href="#visualizing-admixture">4. Visualizing Admixture</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="preparing-input-file">1. Preparing Input File</h2>
+<p>Converting files from one format to another is commonplace in most population genomic analysis. In this exercise, we will be converting the VCF file from ipyrad to a structure formatted input file. We will use <code>PGDSpider</code>, which can convert between a large number of formats.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="bu">cd</span> vcf</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="fu">ls</span> -lh</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 2.6M Nov 17 15:37 ruber_reduced_ref.vcf</span></code></pre></div>
+<ul>
+<li>Quickly generate summary of the VCF file:</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">module</span> load gcc swset perl vcftools</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="ex">vcftools</span> --vcf ruber_reduced_ref.vcf</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="ex">VCFtools</span> - 0.1.14</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="kw">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">Adam</span> Auton and Anthony Marcketta 2009</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a><span class="ex">Parameters</span> as interpreted:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    <span class="ex">--vcf</span> ruber_reduced_ref.vcf</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a><span class="ex">After</span> filtering, kept 33 out of 33 Individuals</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a><span class="ex">After</span> filtering, kept 4562 out of a possible 4562 Sites</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a><span class="ex">Run</span> Time = 0.00 seconds</span></code></pre></div>
+<p><br><br></p>
+<h2 id="pgdspider-template-file">1.1 PGDSpider Template File</h2>
+<p>PGDspider needs a template file, which can be generated from it’s GUI version. This file has already been generated for you, which will simply need to be modified.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="fu">mkdir</span> Admixture <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> Admixture</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/Admixture/vcf2str.spid .</span></code></pre></div>
+<ul>
+<li>Open the file</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">vim</span> vcf2str.spid</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co"># VCF Parser questions</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="va">PARSER_FORMAT=</span>VCF</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="co"># Only output SNPs with a phred-scaled quality of at least:</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="va">VCF_PARSER_QUAL_QUESTION=</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="co"># Select population definition file:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="va">VCF_PARSER_POP_FILE_QUESTION=</span>crovir.pop</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="co"># What is the ploidy of the data?</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="va">VCF_PARSER_PLOIDY_QUESTION=</span>DIPLOID</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a><span class="co"># Do you want to include a file with population definitions?</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="va">VCF_PARSER_POP_QUESTION=</span>true</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a><span class="co"># Output genotypes as missing if the phred-scale genotype quality is below:</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a><span class="va">VCF_PARSER_GTQUAL_QUESTION=</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a><span class="co"># Do you want to include non-polymorphic SNPs?</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a><span class="va">VCF_PARSER_MONOMORPHIC_QUESTION=</span>false</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a><span class="co"># Only output following individuals (ind1, ind2, ind4, ...):</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a><span class="va">VCF_PARSER_IND_QUESTION=</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a><span class="co"># Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a><span class="va">VCF_PARSER_REGION_QUESTION=</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a><span class="co"># Output genotypes as missing if the read depth of a position for the sample is below:</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a><span class="va">VCF_PARSER_READ_QUESTION=</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a><span class="co"># Take most likely genotype if &quot;PL&quot; or &quot;GL&quot; is given in the genotype field?</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a><span class="va">VCF_PARSER_PL_QUESTION=</span>false</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a><span class="co"># Do you want to exclude loci with only missing data?</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a><span class="va">VCF_PARSER_EXC_MISSING_LOCI_QUESTION=</span>true</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a><span class="co"># STRUCTURE Writer questions</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a><span class="va">WRITER_FORMAT=</span>STRUCTURE</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true"></a><span class="co"># Specify the locus/locus combination you want to write to the STRUCTURE file:</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true"></a><span class="va">STRUCTURE_WRITER_LOCUS_COMBINATION_QUESTION=</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true"></a><span class="co"># Do you want to include inter-marker distances?</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true"></a><span class="va">STRUCTURE_WRITER_LOCI_DISTANCE_QUESTION=</span>false</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true"></a><span class="co"># Specify which data type should be included in the STRUCTURE file  (STRUCTURE can only analyze one data type per file):</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true"></a><span class="va">STRUCTURE_WRITER_DATA_TYPE_QUESTION=</span>SNP</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true"></a><span class="co"># Save more specific fastSTRUCTURE format?</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true"></a><span class="va">STRUCTURE_WRITER_FAST_FORMAT_QUESTION=</span>false</span></code></pre></div>
+<p><br><br></p>
+<h2 id="population-.pop-file">1.2 Population (<code>.pop</code>) File</h2>
+<p>This is a two column file:</p>
+<pre><code>- Individual ID
+- Population ID</code></pre>
+<p>The authors of this data set originally did not have an apriori hypothesis about the size and locations of populations. We are just going to loosely group the individuals into <code>North</code> and <code>South</code> populations. This does not have any effect on the analysis we are going to do, but having a population column helps with visualization of results. Get the population file below:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/Admixture/crovir.pop .</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a><span class="fu">head</span> crovir.pop</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a><span class="ex">SD_Field_0201</span>   north</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a><span class="ex">SD_Field_0255</span>   south</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a><span class="ex">SD_Field_0386</span>   south</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="ex">SD_Field_0491</span>   south</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="ex">SD_Field_0492</span>   admixed</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="ex">SD_Field_0493</span>   south</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a><span class="ex">SD_Field_0557</span>   south</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="ex">SD_Field_0598</span>   admixed</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a><span class="ex">SD_Field_0599</span>   south</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="ex">SD_Field_0642</span>   admixed</span></code></pre></div>
+<ul>
+<li>As you can see, there are 3 populations in this file: north, admixed and south.</li>
+</ul>
+<p><br><br></p>
+<h3 id="convert-vcf-to-.str">1.3 Convert VCF to .STR</h3>
+<ul>
+<li><p>Now we have everything we need to convert the VCF file to structure format.</p></li>
+<li><p>Create a new script <code>vcf2str.sh</code></p></li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="co">#SBATCH --time=1:00:00</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="co">#SBATCH --ntasks-per-node=16</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="co">#SBATCH --mem=100G</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a><span class="co">#SBATCH -J vcf2str</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a><span class="co">#SBATCH --account=YOUR_PROJECT</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a><span class="ex">module</span> load gcc swset pgdspider</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true"></a><span class="va">url=</span><span class="st">&quot;/path/to/your/Admixture/Folder/&quot;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true"></a><span class="ex">pgdspider</span> -inputfile <span class="va">$url</span>/ruber_reduced_ref.vcf -inputformat VCF -outputfile <span class="va">$url</span>/crovir.str -outputformat STRUCTURE -spid <span class="va">$url</span>/vcf2str.spid</span></code></pre></div>
+<ul>
+<li>Run the script to generate structure file</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">sbatch</span> vcf2str.sh</span></code></pre></div>
+<ul>
+<li>The script should finish within a few seconds. Once it’s done, take a look at the output file:</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">vim</span> ruber.str</span></code></pre></div>
+<p><br><br></p>
+<h2 id="parallelize-structure">2. Parallelize Structure</h2>
+<ul>
+<li>As you might know, the program STRUCTURE is not optimized for working with multiple processors. This behavior can be changed by using one of the many parallelization routines available. We will use the one from <a href="https://strauto.popgen.org">strauto.popgen.org</a>. Go ahead and download the archive to your local workstation.</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="bu">cd</span> ~</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a><span class="fu">mkdir</span> admixture</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a><span class="bu">cd</span> admixture</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true"></a><span class="fu">ls</span> -lh</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true"></a><span class="ex">-rw-r--r--@</span> 1 vikram  staff   197K Apr  7  2019 strauto_1.tar.gz</span></code></pre></div>
+<ul>
+<li>Uncompress the archive</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="fu">tar</span> -xzvf strauto_1.tar.gz</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="ex">x</span> input.py</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="ex">x</span> py3/</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="ex">x</span> py3/strauto_1.py3</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="ex">x</span> py3/sampleStructureFile.py3</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true"></a><span class="ex">x</span> sampleStructureFile.py</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true"></a><span class="ex">x</span> sim.str</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true"></a><span class="ex">x</span> strauto_doc.pdf</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true"></a><span class="ex">x</span> strauto_1.py</span></code></pre></div>
+<ul>
+<li>Open the <code>input.py</code> file which is the settings template for this program:</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">vim</span> input.py</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="co">## 1. How many populations are you assuming? [Integers]</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="ex">maxpops</span> = 4</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="co">## 2. How many burnin you wish to do before collecting data [Integers]</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a><span class="ex">burnin</span> = 50000</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a><span class="co">## 3. How long do you wish to collect the data after burnin [Integers]</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a><span class="ex">mcmc</span> = 100000</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a><span class="co">## 4. Name of your dataset.  Don&#39;t remove quotes. No spaces allowed. Exclude the &#39;.str&#39; extension.  </span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a><span class="co">##    e.g. dataset = &quot;sim&quot; if your datafile is called &#39;sim.str&#39;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true"></a><span class="ex">dataset</span> = <span class="st">&quot;ruber&quot;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a><span class="co">## 5. How many runs of Structure do you wish to do for every assumed cluster K? [Integers]</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true"></a><span class="ex">kruns</span> = 5</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true"></a><span class="co">## 6. Number of individuals [Integers]</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true"></a><span class="ex">numind</span> = 33</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true"></a><span class="co">## 7. Number of loci [Integers]</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true"></a><span class="ex">numloci</span> = 4562</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true"></a><span class="co">## 8. What is the ploidy [Integers 1 through n]</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true"></a><span class="ex">ploidy</span> = 2</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true"></a><span class="co">## 9. How is the missing data coded? Write inside quotes. e.g. missing = &quot;-9&quot;</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true"></a><span class="ex">missing</span> = <span class="st">&quot;-9&quot;</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true"></a></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true"></a><span class="co">## 10. Does the data file contain every individual on 2 lines (0) or 1 line (1). [Boolean]</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true"></a><span class="ex">onerowperind</span> = 0 </span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true"></a></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true"></a><span class="co">## 11. Do the individuals have labels in the data file?  [Boolean]</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true"></a><span class="ex">label</span> = True</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true"></a></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true"></a><span class="co">## 12. Are populations identified in the data file? [Boolean]</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true"></a><span class="ex">popdata</span> =  True</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true"></a></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true"></a><span class="co">## 13. Do you wish to set the popflag parameter? [Boolean]</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true"></a><span class="ex">popflag</span> = False</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true"></a></span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true"></a><span class="co">## 14. Does the data file contain location identifiers (Not the same as population identifier) [Boolean]</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true"></a><span class="ex">locdata</span> = False</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true"></a><span class="co">## 15. Does the data file contain phenotypic information? [Boolean]</span></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true"></a><span class="ex">pheno</span> = False</span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true"></a></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true"></a><span class="co">## 16. Does the data file contain any extra columns before the genotype data begins? [Boolean]</span></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true"></a><span class="ex">extracols</span> = False</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true"></a></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true"></a><span class="co">## 17. Does the data file contain a row of marker names at the top? [Boolean]</span></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true"></a><span class="ex">markers</span> = True</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true"></a></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true"></a><span class="co">## 18. Are you using dominant markers such as AFLP? [Boolean]</span></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true"></a><span class="ex">dominant</span> = False</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true"></a></span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true"></a><span class="co">## 19. Does the data file contain information on map locations for individual markers? [Boolean]</span></span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true"></a><span class="ex">mapdist</span> = False</span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true"></a></span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true"></a><span class="co">## 20. Is the data in correct phase? [Boolean]</span></span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true"></a><span class="ex">phase</span> = False</span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true"></a></span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true"></a><span class="co">## 21. Is the phase information provided in the data? [Boolean]</span></span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true"></a><span class="ex">phaseinfo</span> = False</span>
+<span id="cb14-65"><a href="#cb14-65" aria-hidden="true"></a></span>
+<span id="cb14-66"><a href="#cb14-66" aria-hidden="true"></a><span class="co">## 22. Does the phase follow markov chain? [Boolean]</span></span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true"></a><span class="ex">markov</span> = False</span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true"></a></span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true"></a><span class="co">## 23. Do you want to make use of parallel processing [Boolean]</span></span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true"></a><span class="co">##     Note that you must have GNU parallel installed and available</span></span>
+<span id="cb14-71"><a href="#cb14-71" aria-hidden="true"></a><span class="co">##     www.gnu.org/s/parallel</span></span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true"></a><span class="co">##     You can check availability of the program by running &#39;which parallel&#39; at the </span></span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true"></a><span class="co">##     command prompt. If a destination of the file is returned, then it is available.</span></span>
+<span id="cb14-74"><a href="#cb14-74" aria-hidden="true"></a><span class="co">##     If not available, it must be installed locally or through your system administrator.</span></span>
+<span id="cb14-75"><a href="#cb14-75" aria-hidden="true"></a></span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true"></a><span class="ex">parallel</span> = True</span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true"></a></span>
+<span id="cb14-78"><a href="#cb14-78" aria-hidden="true"></a><span class="co">## 24. How would you like to define the number of cores for parallel processing [&#39;number&#39; or &#39;percent&#39;]</span></span>
+<span id="cb14-79"><a href="#cb14-79" aria-hidden="true"></a><span class="co">##     Use &#39;percent&#39; if you would like to define the percentage of available cores to use.  For instance,</span></span>
+<span id="cb14-80"><a href="#cb14-80" aria-hidden="true"></a><span class="co">##     on a quad-core machine you might use &#39;percent&#39; here and &#39;75&#39; for cores to use 3 of the 4 processors.</span></span>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true"></a><span class="co">##     Use &#39;number&#39; if you want to explicitely define the number of cores used.  </span></span>
+<span id="cb14-82"><a href="#cb14-82" aria-hidden="true"></a></span>
+<span id="cb14-83"><a href="#cb14-83" aria-hidden="true"></a><span class="ex">core_def</span> = <span class="st">&#39;number&#39;</span></span>
+<span id="cb14-84"><a href="#cb14-84" aria-hidden="true"></a></span>
+<span id="cb14-85"><a href="#cb14-85" aria-hidden="true"></a><span class="co">## 25. How many cores would you like to use [integer]</span></span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true"></a><span class="co">##     This represents either a pecentage or the physical number of cores as defined in core_def (#24).</span></span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true"></a></span>
+<span id="cb14-88"><a href="#cb14-88" aria-hidden="true"></a><span class="ex">cores</span> = 16</span>
+<span id="cb14-89"><a href="#cb14-89" aria-hidden="true"></a></span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true"></a><span class="co">## 26. Would you like to automatically run structureHarvester?  [boolean]</span></span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true"></a><span class="co">##     Note that you must have program installed and available.</span></span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true"></a><span class="co">##     https://users.soe.ucsc.edu/~dearl/software/structureHarvester/</span></span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true"></a></span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true"></a><span class="ex">harvest</span> = False</span></code></pre></div>
+<ul>
+<li>Save and close the file, then fire up Strauto.</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="ex">python</span> strauto_1.py</span></code></pre></div>
+<ul>
+<li>Hit enter on the first screen and you will be presented with the following screen:</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="ex">input.py</span> found. Proceeding!</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="ex">----------------------------------------------------------------------</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a>  <span class="ex">Finished</span> entering data for <span class="st">&#39;ruber&#39;</span>.  Verify your information.</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="ex">----------------------------------------------------------------------</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a>              <span class="ex">Maximum</span> number of assumed populations :   4</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a>                                   <span class="ex">Number</span> of burnin :   50000</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>                                <span class="ex">Number</span> of MCMC reps :   100000</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>                                    <span class="ex">Name</span> of dataset :   ruber</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>                               <span class="ex">Number</span> of runs per K :   5</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a>                              <span class="ex">Number</span> of individuals :   33</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a>                                     <span class="ex">Number</span> of loci :   4562</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a>                                       <span class="ex">Ploidy</span> level :   2</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>                           <span class="ex">Missing</span> data is coded as :   -9</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a>               <span class="ex">Data</span> for every individual on 1 line? :   0</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a>              <span class="ex">Data</span> file contains individual labels? :   True</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a>     <span class="ex">Does</span> data file contain population identifiers? :   True</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true"></a>                                  <span class="ex">Popflag</span> is set to :   False</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true"></a>                            <span class="ex">Location</span> data is set to :   False</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true"></a>                 <span class="ex">Does</span> data file contain phenotypes? :   False</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true"></a>             <span class="ex">Does</span> data file have any extra columns? :   False</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true"></a>    <span class="ex">Does</span> data file contain a row with marker names? :   True</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true"></a>                    <span class="ex">Are</span> you using dominant markers? :   False</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true"></a>              <span class="ex">Does</span> data file contain map distances? :   False</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true"></a>                      <span class="ex">Is</span> the data in correct phase? :   False</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true"></a>     <span class="ex">Does</span> data file contain phase information line? :   False</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true"></a>                    <span class="ex">Does</span> phase follow Markov chain? :   False</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true"></a>                               <span class="ex">Use</span> parallelization? :   True</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true"></a>       <span class="ex">Define</span> number of cores or percentage of cores:   number</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true"></a>          <span class="ex">How</span> many cores (number of, or % of total) <span class="bu">:</span>   16</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true"></a>             <span class="ex">Run</span> Structure Harvester automatically? :   False</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true"></a><span class="ex">----------------------------------------------------------------------</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true"></a>                  <span class="kw">(</span><span class="ex">a</span><span class="kw">)</span><span class="ex">ccept</span> to start writing output files.</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true"></a>                     <span class="kw">(</span><span class="ex">q</span><span class="kw">)</span><span class="ex">uit</span> if you find errors above.</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true"></a>            <span class="ex">Then</span> correct the input file and rerun this script</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true"></a></span></code></pre></div>
+<ul>
+<li>Check to make sure all the settings are as we want them. Then type <code>a</code> for accept and hit enter.</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a><span class="ex">Now</span> writing <span class="st">&#39;mainparams&#39;</span> file for ruber!</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a><span class="ex">Now</span> writing <span class="st">&#39;extraparams&#39;</span> with default values for ruber!</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true"></a><span class="ex">-------------------------------</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true"></a><span class="ex">Checking</span> for Structure binary</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a><span class="ex">------------------------------------------------------------------------------------------</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a><span class="ex">Structure</span> is not in the <span class="va">$PATH</span> or in the current working directory. Scripts will be created</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true"></a><span class="ex">referencing</span> this executable in the working directory. You will need to do have this</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true"></a><span class="ex">executable</span> available in order to run any script created.</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true"></a><span class="ex">-----------------------------------------</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true"></a><span class="ex">Now</span> writing <span class="st">&#39;runstructure&#39;</span> shell script</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true"></a><span class="ex">-----------------------------------------------------------------------------</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true"></a><span class="ex">In</span> order to run the output scripts you need to have access to GNU parallel.</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true"></a><span class="ex">Please</span> visit: http://www.gnu.org/software/parallel/</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true"></a><span class="ex">All</span> scripts will be created but cannot be run until parallel is available.</span></code></pre></div>
+<ul>
+<li><p>There should be two main output files in the current directory:</p>
+<ul>
+<li><p><code>runstructure</code> script</p></li>
+<li><p><code>structureCommands</code> script</p></li>
+</ul></li>
+<li><p>Take a look at both:</p></li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="ex">vim</span> runstructure</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="co">#!/bin/sh </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a><span class="fu">mkdir</span> results_f log harvester</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a><span class="fu">mkdir</span> k1</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a><span class="fu">mkdir</span> k2</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a><span class="fu">mkdir</span> k3</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a><span class="fu">mkdir</span> k4</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true"></a><span class="bu">cd</span> log</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true"></a><span class="fu">mkdir</span> k1</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true"></a><span class="fu">mkdir</span> k2</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true"></a><span class="fu">mkdir</span> k3</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true"></a><span class="fu">mkdir</span> k4</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true"></a><span class="bu">cd</span> ..</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true"></a><span class="fu">cat</span> structureCommands <span class="kw">|</span> <span class="ex">parallel</span> -j 16</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true"></a><span class="fu">mv</span> k1 k2 k3 k4  results_f/</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true"></a><span class="fu">mkdir</span> harvester_input</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true"></a><span class="fu">cp</span> results_f/k*/*_f harvester_input</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&#39;Your structure run has finished.&#39;</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true"></a><span class="co">#Clean up harvester input files.</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true"></a><span class="fu">zip</span> ruber_Harvester_Upload.zip harvester_input/*</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true"></a><span class="fu">mv</span> ruber_Harvester_Upload.zip harvester/</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true"></a><span class="fu">rm</span> -rf harvester_input</span></code></pre></div>
+<ul>
+<li>Now we need to convert this simple bash script so it will work on Teton:</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a><span class="co">#SBATCH --time=8:00:00</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a><span class="co">#SBATCH --nodes=1</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a><span class="co">#SBATCH --ntasks-per-node=16</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a><span class="co">#SBATCH --mail-type=NONE</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a><span class="co">#SBATCH -J admix</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a><span class="co">#SBATCH --account=YOUR_PROJECT</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true"></a><span class="ex">module</span> load gcc swset parallel structure</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true"></a></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true"></a><span class="fu">mkdir</span> results_f log harvester</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true"></a><span class="fu">mkdir</span> k1</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true"></a><span class="fu">mkdir</span> k2</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true"></a><span class="fu">mkdir</span> k3</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true"></a><span class="fu">mkdir</span> k4</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true"></a></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true"></a><span class="bu">cd</span> log</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true"></a><span class="fu">mkdir</span> k1</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true"></a><span class="fu">mkdir</span> k2</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true"></a><span class="fu">mkdir</span> k3</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true"></a><span class="fu">mkdir</span> k4</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true"></a><span class="bu">cd</span> ..</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true"></a></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true"></a><span class="fu">cat</span> structureCommands <span class="kw">|</span> <span class="ex">parallel</span> -j 16</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true"></a></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true"></a><span class="fu">mv</span> k1 k2 k3 k4  results_f/</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true"></a><span class="fu">mkdir</span> harvester_input</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true"></a><span class="fu">cp</span> results_f/k*/*_f harvester_input</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&#39;Your structure run has finished.&#39;</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true"></a><span class="co">#Clean up harvester input files.</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true"></a><span class="fu">zip</span> ruber_Harvester_Upload.zip harvester_input/*</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true"></a><span class="fu">mv</span> ruber_Harvester_Upload.zip harvester/</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true"></a><span class="fu">rm</span> -rf harvester_input</span></code></pre></div>
+<ul>
+<li>Save and close this file. Then open <code>structureCommands</code></li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="ex">vim</span> structureCommands</span></code></pre></div>
+<ul>
+<li><p>As described in the Strauto user manual section #8, we need to append some SLURM specific commands at the beginning of each line on this file.</p></li>
+<li><p>The command we need to prepend to each line is:</p>
+<p><code>srun -N1 -n1 --exclusive</code></p></li>
+<li><p>In vim:</p></li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a>:<span class="ex">%s</span>/^\<span class="ex">.</span>\///g</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a>:<span class="ex">%s</span>/^<span class="ex">/srun</span> \-N1 \-n1 \-\-exclusive  /g</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a>:<span class="ex">wq</span></span></code></pre></div>
+<ul>
+<li>The script should now look something like this:</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 583084 -K 1 -m mainparams -o k1/ruber_k1_run1 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k1/ruber_k1_run1.log</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 314748 -K 1 -m mainparams -o k1/ruber_k1_run2 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k1/ruber_k1_run2.log</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 657495 -K 1 -m mainparams -o k1/ruber_k1_run3 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k1/ruber_k1_run3.log</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 307315 -K 1 -m mainparams -o k1/ruber_k1_run4 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k1/ruber_k1_run4.log</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 683833 -K 1 -m mainparams -o k1/ruber_k1_run5 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k1/ruber_k1_run5.log</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 518435 -K 2 -m mainparams -o k2/ruber_k2_run1 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k2/ruber_k2_run1.log</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 333897 -K 2 -m mainparams -o k2/ruber_k2_run2 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k2/ruber_k2_run2.log</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 493448 -K 2 -m mainparams -o k2/ruber_k2_run3 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k2/ruber_k2_run3.log</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 967055 -K 2 -m mainparams -o k2/ruber_k2_run4 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k2/ruber_k2_run4.log</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 836430 -K 2 -m mainparams -o k2/ruber_k2_run5 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k2/ruber_k2_run5.log</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 703354 -K 3 -m mainparams -o k3/ruber_k3_run1 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k3/ruber_k3_run1.log</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 429104 -K 3 -m mainparams -o k3/ruber_k3_run2 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k3/ruber_k3_run2.log</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 784866 -K 3 -m mainparams -o k3/ruber_k3_run3 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k3/ruber_k3_run3.log</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 956357 -K 3 -m mainparams -o k3/ruber_k3_run4 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k3/ruber_k3_run4.log</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 377533 -K 3 -m mainparams -o k3/ruber_k3_run5 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k3/ruber_k3_run5.log</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 799643 -K 4 -m mainparams -o k4/ruber_k4_run1 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k4/ruber_k4_run1.log</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 129610 -K 4 -m mainparams -o k4/ruber_k4_run2 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k4/ruber_k4_run2.log</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 705345 -K 4 -m mainparams -o k4/ruber_k4_run3 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k4/ruber_k4_run3.log</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 305582 -K 4 -m mainparams -o k4/ruber_k4_run4 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k4/ruber_k4_run4.log</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true"></a><span class="ex">srun</span> -N1 -n1 --exclusive structure -D 804930 -K 4 -m mainparams -o k4/ruber_k4_run5 <span class="op">2&gt;&amp;1</span> <span class="op">&gt;</span> log/k4/ruber_k4_run5.log</span></code></pre></div>
+<ul>
+<li>Go ahead and upload these two scripts to the Admixture folder on Teton where the rest of your files are:</li>
+</ul>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="fu">rsync</span> -raz structureCommands runstructure mainparams extraparams teton:/path/to/your/Admixture/Folder/</span></code></pre></div>
+<ul>
+<li>Once the files are all uploaded, go ahead and execuse the script:</li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="ex">sbatch</span> runstructure</span></code></pre></div>
+</body>
+</html>
