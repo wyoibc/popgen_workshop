@@ -12,7 +12,7 @@ date: November 12, 2021
 
 - [2. Parallelizing Structure](#parallelizing-structure)
 
-- [3. Running Structure and Processing Output](#processing-output)
+- [3. Running Structure and Processing Output](#running-structure-and-processing-output)
 
 - [4. Visualizing Admixture](#visualizing-admixture)
 
@@ -577,6 +577,13 @@ srun -N1 -n1 --exclusive structure -D 804930 -K 4 -m mainparams -o k4/ruber_k4_r
 rsync -raz structureCommands runstructure mainparams extraparams teton:/path/to/your/Admixture/Folder/
 ```
 
+
+<br><br>
+
+## 3. Running Structure and Processing Output
+
+
+
 - Once the files are all uploaded, go ahead and execuse the script:
 
 
@@ -585,12 +592,340 @@ sbatch runstructure
 ```
 
 
+<br><br>
+
+### 3.1 Assessing Structure Output
+
+- The script will create multiple folders in your current directory structure and start writing log and output files. The analysis may last a few hours.  But when it's done, you will have following results.
+
+```bash
+
+ls -lh
+
+drwxrwsr-x 6 vchhatre 4.0K Nov 18 11:19 log
+-rw-rw-r-- 1 vchhatre  140 Nov 18 12:01 seed.txt
+drwxrwsr-x 6 vchhatre 4.0K Nov 18 13:34 results_f
+-rw-rw-r-- 1 vchhatre 1.2K Nov 18 13:34 slurm-15640920.out
+drwxrwsr-x 2 vchhatre 4.0K Nov 18 13:34 harvester
+
+```
+
+- Take a look inside the ``log`` and ``results_f`` folders:
+
+```bash
+
+ls -othr log/* results_f/*
+
+log/k1:
+total 480K
+-rw-rw-r-- 1 vchhatre 84K Nov 18 12:00 ruber_k1_run5.log
+-rw-rw-r-- 1 vchhatre 84K Nov 18 12:00 ruber_k1_run2.log
+-rw-rw-r-- 1 vchhatre 84K Nov 18 12:01 ruber_k1_run1.log
+-rw-rw-r-- 1 vchhatre 84K Nov 18 12:01 ruber_k1_run4.log
+-rw-rw-r-- 1 vchhatre 84K Nov 18 12:03 ruber_k1_run3.log
+
+log/k2:
+total 800K
+-rw-rw-r-- 1 vchhatre 158K Nov 18 12:17 ruber_k2_run2.log
+-rw-rw-r-- 1 vchhatre 158K Nov 18 12:17 ruber_k2_run1.log
+-rw-rw-r-- 1 vchhatre 158K Nov 18 12:17 ruber_k2_run5.log
+-rw-rw-r-- 1 vchhatre 158K Nov 18 12:17 ruber_k2_run4.log
+-rw-rw-r-- 1 vchhatre 158K Nov 18 12:17 ruber_k2_run3.log
+
+log/k3:
+total 960K
+-rw-rw-r-- 1 vchhatre 187K Nov 18 12:32 ruber_k3_run2.log
+-rw-rw-r-- 1 vchhatre 187K Nov 18 12:32 ruber_k3_run4.log
+-rw-rw-r-- 1 vchhatre 187K Nov 18 12:32 ruber_k3_run5.log
+-rw-rw-r-- 1 vchhatre 187K Nov 18 12:32 ruber_k3_run1.log
+-rw-rw-r-- 1 vchhatre 187K Nov 18 12:33 ruber_k3_run3.log
+
+log/k4:
+total 1.2M
+-rw-rw-r-- 1 vchhatre 231K Nov 18 12:46 ruber_k4_run1.log
+-rw-rw-r-- 1 vchhatre 231K Nov 18 13:26 ruber_k4_run2.log
+-rw-rw-r-- 1 vchhatre 231K Nov 18 13:33 ruber_k4_run4.log
+-rw-rw-r-- 1 vchhatre 231K Nov 18 13:33 ruber_k4_run5.log
+-rw-rw-r-- 1 vchhatre 231K Nov 18 13:34 ruber_k4_run3.log
+
+results_f/k1:
+total 2.3M
+-rw-rw-r-- 1 vchhatre 456K Nov 18 12:00 ruber_k1_run5_f
+-rw-rw-r-- 1 vchhatre 456K Nov 18 12:00 ruber_k1_run2_f
+-rw-rw-r-- 1 vchhatre 456K Nov 18 12:01 ruber_k1_run1_f
+-rw-rw-r-- 1 vchhatre 456K Nov 18 12:01 ruber_k1_run4_f
+-rw-rw-r-- 1 vchhatre 456K Nov 18 12:03 ruber_k1_run3_f
+
+results_f/k2:
+total 2.5M
+-rw-rw-r-- 1 vchhatre 510K Nov 18 12:17 ruber_k2_run2_f
+-rw-rw-r-- 1 vchhatre 510K Nov 18 12:17 ruber_k2_run1_f
+-rw-rw-r-- 1 vchhatre 510K Nov 18 12:17 ruber_k2_run5_f
+-rw-rw-r-- 1 vchhatre 510K Nov 18 12:17 ruber_k2_run4_f
+-rw-rw-r-- 1 vchhatre 510K Nov 18 12:17 ruber_k2_run3_f
+
+results_f/k3:
+total 2.9M
+-rw-rw-r-- 1 vchhatre 564K Nov 18 12:32 ruber_k3_run2_f
+-rw-rw-r-- 1 vchhatre 564K Nov 18 12:32 ruber_k3_run4_f
+-rw-rw-r-- 1 vchhatre 564K Nov 18 12:32 ruber_k3_run5_f
+-rw-rw-r-- 1 vchhatre 564K Nov 18 12:32 ruber_k3_run1_f
+-rw-rw-r-- 1 vchhatre 564K Nov 18 12:33 ruber_k3_run3_f
+
+results_f/k4:
+total 3.1M
+-rw-rw-r-- 1 vchhatre 618K Nov 18 12:46 ruber_k4_run1_f
+-rw-rw-r-- 1 vchhatre 618K Nov 18 13:26 ruber_k4_run2_f
+-rw-rw-r-- 1 vchhatre 618K Nov 18 13:33 ruber_k4_run4_f
+-rw-rw-r-- 1 vchhatre 618K Nov 18 13:33 ruber_k4_run5_f
+-rw-rw-r-- 1 vchhatre 618K Nov 18 13:34 ruber_k4_run3_f
+
+```
+
+- We will now briefly look inside a log file and a results file.
 
 
 
+<br><br>
+
+### 3.2 Structure Harvester
+
+- Next, check what's inside Harvester folder:
+
+
+```bash
+
+ls -lh harvester
+
+-rw-rw-r-- 1 vchhatre 2.1M Nov 18 13:34 ruber_Harvester_Upload.zip
+
+```
+
+- It's a zip file containing all the results from our run. [Structure Harvester](http://taylor0.biology.ucla.edu/structureHarvester/) is a very popular program to visualize results from Structure to understand the extent of population structure present in your data set.
+
+- Download this zip file using rsync to your local workstation.  Then visit the Structure Harvester website, upload the zip file and click ``harvest``.
+
+- Harvester will display all the visualizations and summary files in the browser window. You should then download an archive of all those results to your local workstation.
+
+- One of the output files contains admixture coefficients for all the individuals at various levels that were tested (e.g. K=2, K=3, and K=4). Based on Harvester results, it looks like the optimal number of Hardy Weinberg clusters in this data set is 2. So for further analysis, we will use the admixture coefficients at K=2.
+
+- Check the file named ``k2.indfile``.
+
+```bash
+
+head K2.indfile
+
+  1   1 (19)  1 : 0.000 1.000
+  2   2 (22)  1 : 0.000 1.000
+  3   3 (26)  1 : 0.056 0.944
+  4   4 (35)  1 : 0.000 1.000
+  5   5 (29)  1 : 0.000 1.000
+  6   6 (16)  1 : 0.000 1.000
+  7   7 (20)  1 : 0.001 0.999
+  8   8 (19)  1 : 0.000 1.000
+  9   9 (29)  1 : 0.000 1.000
+ 10  10 (38)  1 : 0.000 1.000
+
+```
+
+- The last two columns in this file are admixture coefficients. These coefficients indicate the amount of ancestry each individual draws from the two HW clusters. 
+
+- Check the number of lines in this file. It's at least ``33 * 5 = 165``. Why is this? It's because the admixture coefficients are printed for each of the 5 iterations we performed in Structure. In an ideal world, we would have time to process this output through the cluster matching program CLUMPP which takes all of these admixture matrices and outputs a single best matrix which can then be used for visualization. Since we do not have time to go through that process, we will use the coefficients from the first iteration at K=2.
+
+
+```bash
+
+sed -n 1,33p K2.indfile > ruber_k2.indfile
+
+vim ruber_k2.indfile
+
+```
+
+- Now we wish to get rid of everything in this file except the last two columns. We will replace multiple spaces between columns with a single tab:
+
+
+```bash
+:%s/\s\+/\t/g
+
+:wq
+```
+
+- Then we will cut out the last two columns (no. 6 & 7)
+
+
+```bash
+
+cut -f6-7 ruber_k2.indfile > ruber_k2.admix
+
+head ruber_k2.admix
+
+0.000	1.000
+0.000	1.000
+0.056	0.944
+0.000	1.000
+0.000	1.000
+0.000	1.000
+0.001	0.999
+0.000	1.000
+0.000	1.000
+0.000	1.000
+
+```
+
+- Rename this file to ``ruber_k2.2.meanQ``
+
+- Now we can use this file for visualizing admixture results:
 
 
 
+<br><br>
+
+
+## 4. Visualizing Admixture
+
+
+- In addition to the ``ruber_k2.2.meanQ`` file, we are going to need a couple of files:
+
+	- A popfile, containing one population name per individual
+	- A poporder file, denoting the order in which populations should appear on the plot
+
+- We already have the popfile (``crovir.pop``). However, we could not use that file. Remember that when you used PGDSpider to convert VCF file to Structure format, it changed the order of individuals. We must use the same order of individuals as in the structure file.
+
+```bash
+
+cut -f2 ruber.str > ruber.pop
+
+cat ruber.pop
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+3
+3
+3
+3
+3
+3
+3
+3
+3
+3
+
+```
+
+- Keep in mind that ``1=North``, ``2=South``, and ``3=Admixed``.  Let's run a quick replacement:
+
+
+```bash
+
+vim ruber.pop
+
+:%s/1/North/g
+:%s/2/South/g
+:%s/3/Admixed/g
+
+:w ruber.pop
+:q
+```
+
+- Finally make a file with population order as follows:
+
+```bash
+
+vim poporder
+
+North
+Admix
+South
+
+:wq
+```
+
+<br><br>
+
+
+### 4.1 Distruct Plotting Script
+
+- Next, let's get the distruct plotting script from [distruct2.popgen.org](https://distruct2.popgen.org). Once you download the archive, uncompress it:
+
+
+```bash
+
+tar -xzvf distruct2.3.tar.gz
+
+```
+
+- Make sure the following files are present in the folder:
+
+	- ``ruber_k2.2.meanQ``
+	- ``poporder``
+	- ``popfile``
+
+- Then execute the script as follows:
+
+
+```bash
+python distruct2.3.py -K 3
+	--input=ruber_k2
+	--output=ruber_k2.pdf
+	--title="Population Structure in Crotalus ruber"
+	--popfile=ruber.pop
+	--poporder=poporder
+
+```
 
 
 

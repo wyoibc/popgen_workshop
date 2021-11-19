@@ -91,7 +91,7 @@
 <ul>
 <li><p><a href="#preparing-input-file">1. Preparing Input File</a></p></li>
 <li><p><a href="#parallelizing-structure">2. Parallelizing Structure</a></p></li>
-<li><p><a href="#processing-output">3. Running Structure and Processing Output</a></p></li>
+<li><p><a href="#running-structure-and-processing-output">3. Running Structure and Processing Output</a></p></li>
 <li><p><a href="#visualizing-admixture">4. Visualizing Admixture</a></p></li>
 </ul>
 <p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
@@ -533,9 +533,287 @@
 <li>Go ahead and upload these two scripts to the Admixture folder on Teton where the rest of your files are:</li>
 </ul>
 <div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="fu">rsync</span> -raz structureCommands runstructure mainparams extraparams teton:/path/to/your/Admixture/Folder/</span></code></pre></div>
+<p><br><br></p>
+<h2 id="running-structure-and-processing-output">3. Running Structure and Processing Output</h2>
 <ul>
 <li>Once the files are all uploaded, go ahead and execuse the script:</li>
 </ul>
 <div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="ex">sbatch</span> runstructure</span></code></pre></div>
+<p><br><br></p>
+<h3 id="assessing-structure-output">3.1 Assessing Structure Output</h3>
+<ul>
+<li>The script will create multiple folders in your current directory structure and start writing log and output files. The analysis may last a few hours. But when it’s done, you will have following results.</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a><span class="fu">ls</span> -lh</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a><span class="ex">drwxrwsr-x</span> 6 vchhatre 4.0K Nov 18 11:19 log</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre  140 Nov 18 12:01 seed.txt</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a><span class="ex">drwxrwsr-x</span> 6 vchhatre 4.0K Nov 18 13:34 results_f</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 1.2K Nov 18 13:34 slurm-15640920.out</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true"></a><span class="ex">drwxrwsr-x</span> 2 vchhatre 4.0K Nov 18 13:34 harvester</span></code></pre></div>
+<ul>
+<li>Take a look inside the <code>log</code> and <code>results_f</code> folders:</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true"></a><span class="fu">ls</span> -othr log/* results_f/*</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true"></a><span class="ex">log</span>/k1:</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true"></a><span class="ex">total</span> 480K</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 84K Nov 18 12:00 ruber_k1_run5.log</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 84K Nov 18 12:00 ruber_k1_run2.log</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 84K Nov 18 12:01 ruber_k1_run1.log</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 84K Nov 18 12:01 ruber_k1_run4.log</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 84K Nov 18 12:03 ruber_k1_run3.log</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true"></a><span class="ex">log</span>/k2:</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true"></a><span class="ex">total</span> 800K</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 158K Nov 18 12:17 ruber_k2_run2.log</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 158K Nov 18 12:17 ruber_k2_run1.log</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 158K Nov 18 12:17 ruber_k2_run5.log</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 158K Nov 18 12:17 ruber_k2_run4.log</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 158K Nov 18 12:17 ruber_k2_run3.log</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true"></a><span class="ex">log</span>/k3:</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true"></a><span class="ex">total</span> 960K</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 187K Nov 18 12:32 ruber_k3_run2.log</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 187K Nov 18 12:32 ruber_k3_run4.log</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 187K Nov 18 12:32 ruber_k3_run5.log</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 187K Nov 18 12:32 ruber_k3_run1.log</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 187K Nov 18 12:33 ruber_k3_run3.log</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true"></a></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true"></a><span class="ex">log</span>/k4:</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true"></a><span class="ex">total</span> 1.2M</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 231K Nov 18 12:46 ruber_k4_run1.log</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 231K Nov 18 13:26 ruber_k4_run2.log</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 231K Nov 18 13:33 ruber_k4_run4.log</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 231K Nov 18 13:33 ruber_k4_run5.log</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 231K Nov 18 13:34 ruber_k4_run3.log</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true"></a></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true"></a><span class="ex">results_f</span>/k1:</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true"></a><span class="ex">total</span> 2.3M</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 456K Nov 18 12:00 ruber_k1_run5_f</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 456K Nov 18 12:00 ruber_k1_run2_f</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 456K Nov 18 12:01 ruber_k1_run1_f</span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 456K Nov 18 12:01 ruber_k1_run4_f</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 456K Nov 18 12:03 ruber_k1_run3_f</span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true"></a></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true"></a><span class="ex">results_f</span>/k2:</span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true"></a><span class="ex">total</span> 2.5M</span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 510K Nov 18 12:17 ruber_k2_run2_f</span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 510K Nov 18 12:17 ruber_k2_run1_f</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 510K Nov 18 12:17 ruber_k2_run5_f</span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 510K Nov 18 12:17 ruber_k2_run4_f</span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 510K Nov 18 12:17 ruber_k2_run3_f</span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true"></a></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true"></a><span class="ex">results_f</span>/k3:</span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true"></a><span class="ex">total</span> 2.9M</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 564K Nov 18 12:32 ruber_k3_run2_f</span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 564K Nov 18 12:32 ruber_k3_run4_f</span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 564K Nov 18 12:32 ruber_k3_run5_f</span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 564K Nov 18 12:32 ruber_k3_run1_f</span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 564K Nov 18 12:33 ruber_k3_run3_f</span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true"></a></span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true"></a><span class="ex">results_f</span>/k4:</span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true"></a><span class="ex">total</span> 3.1M</span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 618K Nov 18 12:46 ruber_k4_run1_f</span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 618K Nov 18 13:26 ruber_k4_run2_f</span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 618K Nov 18 13:33 ruber_k4_run4_f</span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 618K Nov 18 13:33 ruber_k4_run5_f</span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 618K Nov 18 13:34 ruber_k4_run3_f</span></code></pre></div>
+<ul>
+<li>We will now briefly look inside a log file and a results file.</li>
+</ul>
+<p><br><br></p>
+<h3 id="structure-harvester">3.2 Structure Harvester</h3>
+<ul>
+<li>Next, check what’s inside Harvester folder:</li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a><span class="fu">ls</span> -lh harvester</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 2.1M Nov 18 13:34 ruber_Harvester_Upload.zip</span></code></pre></div>
+<ul>
+<li><p>It’s a zip file containing all the results from our run. <a href="http://taylor0.biology.ucla.edu/structureHarvester/">Structure Harvester</a> is a very popular program to visualize results from Structure to understand the extent of population structure present in your data set.</p></li>
+<li><p>Download this zip file using rsync to your local workstation. Then visit the Structure Harvester website, upload the zip file and click <code>harvest</code>.</p></li>
+<li><p>Harvester will display all the visualizations and summary files in the browser window. You should then download an archive of all those results to your local workstation.</p></li>
+<li><p>One of the output files contains admixture coefficients for all the individuals at various levels that were tested (e.g. K=2, K=3, and K=4). Based on Harvester results, it looks like the optimal number of Hardy Weinberg clusters in this data set is 2. So for further analysis, we will use the admixture coefficients at K=2.</p></li>
+<li><p>Check the file named <code>k2.indfile</code>.</p></li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a><span class="fu">head</span> K2.indfile</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true"></a>  <span class="ex">1</span>   1 (19)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true"></a>  <span class="ex">2</span>   2 (22)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true"></a>  <span class="ex">3</span>   3 (26)  <span class="ex">1</span> : 0.056 0.944</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true"></a>  <span class="ex">4</span>   4 (35)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true"></a>  <span class="ex">5</span>   5 (29)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true"></a>  <span class="ex">6</span>   6 (16)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true"></a>  <span class="ex">7</span>   7 (20)  <span class="ex">1</span> : 0.001 0.999</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true"></a>  <span class="ex">8</span>   8 (19)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true"></a>  <span class="ex">9</span>   9 (29)  <span class="ex">1</span> : 0.000 1.000</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true"></a> <span class="ex">10</span>  10 (38)  <span class="ex">1</span> : 0.000 1.000</span></code></pre></div>
+<ul>
+<li><p>The last two columns in this file are admixture coefficients. These coefficients indicate the amount of ancestry each individual draws from the two HW clusters.</p></li>
+<li><p>Check the number of lines in this file. It’s at least <code>33 * 5 = 165</code>. Why is this? It’s because the admixture coefficients are printed for each of the 5 iterations we performed in Structure. In an ideal world, we would have time to process this output through the cluster matching program CLUMPP which takes all of these admixture matrices and outputs a single best matrix which can then be used for visualization. Since we do not have time to go through that process, we will use the coefficients from the first iteration at K=2.</p></li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a><span class="fu">sed</span> -n 1,33p K2.indfile <span class="op">&gt;</span> ruber_k2.indfile</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a><span class="ex">vim</span> ruber_k2.indfile</span></code></pre></div>
+<ul>
+<li>Now we wish to get rid of everything in this file except the last two columns. We will replace multiple spaces between columns with a single tab:</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a>:<span class="ex">%s</span>/\<span class="ex">s</span>\+/\t/g</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true"></a>:<span class="ex">wq</span></span></code></pre></div>
+<ul>
+<li>Then we will cut out the last two columns (no. 6 &amp; 7)</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a><span class="fu">cut</span> -f6-7 ruber_k2.indfile <span class="op">&gt;</span> ruber_k2.admix</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true"></a><span class="fu">head</span> ruber_k2.admix</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true"></a><span class="ex">0.056</span>   0.944</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true"></a><span class="ex">0.001</span>   0.999</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true"></a><span class="ex">0.000</span>   1.000</span></code></pre></div>
+<ul>
+<li><p>Rename this file to <code>ruber_k2.2.meanQ</code></p></li>
+<li><p>Now we can use this file for visualizing admixture results:</p></li>
+</ul>
+<p><br><br></p>
+<h2 id="visualizing-admixture">4. Visualizing Admixture</h2>
+<ul>
+<li><p>In addition to the <code>ruber_k2.2.meanQ</code> file, we are going to need a couple of files:</p>
+<ul>
+<li>A popfile, containing one population name per individual</li>
+<li>A poporder file, denoting the order in which populations should appear on the plot</li>
+</ul></li>
+<li><p>We already have the popfile (<code>crovir.pop</code>). However, we could not use that file. Remember that when you used PGDSpider to convert VCF file to Structure format, it changed the order of individuals. We must use the same order of individuals as in the structure file.</p></li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true"></a></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true"></a><span class="fu">cut</span> -f2 ruber.str <span class="op">&gt;</span> ruber.pop</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true"></a><span class="fu">cat</span> ruber.pop</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true"></a><span class="ex">1</span></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true"></a><span class="ex">2</span></span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-65"><a href="#cb33-65" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-66"><a href="#cb33-66" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-67"><a href="#cb33-67" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-68"><a href="#cb33-68" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-69"><a href="#cb33-69" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-70"><a href="#cb33-70" aria-hidden="true"></a><span class="ex">3</span></span>
+<span id="cb33-71"><a href="#cb33-71" aria-hidden="true"></a><span class="ex">3</span></span></code></pre></div>
+<ul>
+<li>Keep in mind that <code>1=North</code>, <code>2=South</code>, and <code>3=Admixed</code>. Let’s run a quick replacement:</li>
+</ul>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true"></a><span class="ex">vim</span> ruber.pop</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true"></a>:<span class="ex">%s/1/North/g</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true"></a>:<span class="ex">%s/2/South/g</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true"></a>:<span class="ex">%s/3/Admixed/g</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true"></a></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true"></a>:<span class="ex">w</span> ruber.pop</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true"></a>:<span class="ex">q</span></span></code></pre></div>
+<ul>
+<li>Finally make a file with population order as follows:</li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true"></a></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true"></a><span class="ex">vim</span> poporder</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true"></a><span class="ex">North</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true"></a><span class="ex">Admix</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true"></a><span class="ex">South</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true"></a>:<span class="ex">wq</span></span></code></pre></div>
+<p><br><br></p>
+<h3 id="distruct-plotting-script">4.1 Distruct Plotting Script</h3>
+<ul>
+<li>Next, let’s get the distruct plotting script from <a href="https://distruct2.popgen.org">distruct2.popgen.org</a>. Once you download the archive, uncompress it:</li>
+</ul>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true"></a></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true"></a><span class="fu">tar</span> -xzvf distruct2.3.tar.gz</span></code></pre></div>
+<ul>
+<li><p>Make sure the following files are present in the folder:</p>
+<ul>
+<li><code>ruber_k2.2.meanQ</code></li>
+<li><code>poporder</code></li>
+<li><code>popfile</code></li>
+</ul></li>
+<li><p>Then execute the script as follows:</p></li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true"></a><span class="ex">python</span> distruct2.3.py -K 3</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true"></a>    <span class="ex">--input</span>=ruber_k2</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true"></a>    <span class="ex">--output</span>=ruber_k2.pdf</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true"></a>    <span class="ex">--title</span>=<span class="st">&quot;Population Structure in Crotalus ruber&quot;</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true"></a>    <span class="ex">--popfile</span>=ruber.pop</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true"></a>    <span class="ex">--poporder</span>=poporder</span></code></pre></div>
 </body>
 </html>

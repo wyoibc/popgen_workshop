@@ -1,0 +1,53 @@
+# This document produced by structureHarvester core version vA.2 July 2014
+# http://www.structureharvester.com/
+# https://github.com/dentearl/structureHarvester/
+# http://taylor0.biology.ucla.edu/structureHarvester
+# http://users.soe.ucsc.edu/~dearl/software/structureHarvester
+# Written by Dent Earl, dearl (a) soe ucsc edu.
+# CITATION:
+# Earl, Dent A. and vonHoldt, Bridgett M. (2012)
+# STRUCTURE HARVESTER: a website and program for visualizing
+# STRUCTURE output and implementing the Evanno method.
+# Conservation Genetics Resources 4(2) 359-361. DOI: 10.1007/s12686-011-9548-7
+# Core version: vA.2 July 2014
+# File generated at 2021-Nov-18 16:41:41 PST
+#
+
+##########
+# K	Reps	mean est. LnP(Data)	stdev est. LnP(Data)
+1	5	-63770.540000	110.381828
+2	5	-50814.540000	14.879449
+3	5	-51554.580000	13.998821
+4	5	-61836.840000	22739.354902
+
+##########
+# File name	Run #	K	Est. Ln prob. of data	Mean value of Ln likelihood	Variance of Ln likelihood
+harvester_inputruber_k1_run2_f		1	-63839.2	-62652.0	2374.5
+harvester_inputruber_k1_run4_f		1	-63859.2	-62656.0	2406.3
+harvester_inputruber_k1_run3_f		1	-63648.4	-62556.4	2184.0
+harvester_inputruber_k1_run1_f		1	-63854.5	-62655.2	2398.6
+harvester_inputruber_k1_run5_f		1	-63651.4	-62556.6	2189.5
+harvester_inputruber_k2_run2_f		2	-50800.2	-48913.4	3773.5
+harvester_inputruber_k2_run4_f		2	-50806.0	-48912.9	3786.3
+harvester_inputruber_k2_run5_f		2	-50812.6	-48913.0	3799.2
+harvester_inputruber_k2_run1_f		2	-50839.1	-48912.6	3852.9
+harvester_inputruber_k2_run3_f		2	-50814.8	-48913.8	3801.9
+harvester_inputruber_k3_run1_f		3	-51543.2	-49403.9	4278.6
+harvester_inputruber_k3_run3_f		3	-51552.1	-49394.5	4315.2
+harvester_inputruber_k3_run5_f		3	-51577.7	-49397.2	4360.9
+harvester_inputruber_k3_run2_f		3	-51555.9	-49389.2	4333.4
+harvester_inputruber_k3_run4_f		3	-51544.0	-49394.3	4299.5
+harvester_inputruber_k4_run5_f		4	-51795.8	-49374.2	4843.2
+harvester_inputruber_k4_run4_f		4	-51626.5	-49410.2	4432.7
+harvester_inputruber_k4_run2_f		4	-51655.0	-49405.2	4499.6
+harvester_inputruber_k4_run1_f		4	-51592.9	-49399.2	4387.4
+harvester_inputruber_k4_run3_f		4	-102514.0	-49032.5	106962.9
+
+Software written by Dent Earl while at EEB Dept, UCLA, BME Dept UCSC
+dearl (a) soe ucsc edu
+CITATION:
+Earl, Dent A. and vonHoldt, Bridgett M. (2012)
+STRUCTURE HARVESTER: a website and program for visualizing
+STRUCTURE output and implementing the Evanno method.
+# Conservation Genetics Resources 4(2) 359-361. DOI: 10.1007/s12686-011-9548-7
+Core version: vA.2 July 2014
