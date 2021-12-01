@@ -398,7 +398,7 @@ If we had only pure IBD, we would expect a single, roughly linear cloud of point
 
 <center>
 
-<img src="kd_north_.png" width=500 />
+<img src="kd_north.png" width=500 />
 </center>
 
 
