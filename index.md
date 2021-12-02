@@ -51,7 +51,7 @@ author: Wyoming INBRE Data Science Core
 
 ### 6. Make Your Work Reproducible and Publicly Available
 
-- [Week 5: A Git Repo for your Publication](week5/git/git.html)
+- [Week 5: A Git Repo for your Publication](week5/git/git_intro.html)
 
 
 
