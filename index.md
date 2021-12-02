@@ -46,7 +46,12 @@ author: Wyoming INBRE Data Science Core
 
 - [Week 4: DAPC & snmf Analysis](week4/DAPC_snmf/dapc_ibd_snmf.html)
 
+- [Week 5: Selection Analysis with Bayescan](week5/selection/bayescan.html)
 
+
+### 6. Make Your Work Reproducible and Publicly Available
+
+- [Week 5: A Git Repo for your Publication](week5/git/git.html)
 
 
 
