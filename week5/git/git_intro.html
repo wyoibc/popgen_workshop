@@ -157,22 +157,26 @@
 <p>add the following to the file (again changing my paths to your own), then save and close it:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Host</span> <span class="pp">*</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>   <span class="ex">AddKeysToAgent</span> yes</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>   <span class="ex">UseKeychain</span> yes</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Host</span> seanharrington256.github.com</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="ex">HostName</span> github.com</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="ex">User</span> git</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">PreferredAuthentications</span> publickey</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="ex">IdentityFile</span> /home/sharrin2/.ssh/github_key</span></code></pre></div>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>   <span class="ex">IgnoreUnknown</span> AddKeysToAgent,UseKeychain</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>   <span class="ex">UseKeychain</span> yes</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Host</span> seanharrington256.github.com</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="ex">HostName</span> github.com</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">User</span> git</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="ex">PreferredAuthentications</span> publickey</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="ex">IdentityFile</span> /home/sharrin2/.ssh/github_key</span></code></pre></div>
+<p>We also need to change the permissions on this file.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 600 ~/.ssh/config</span></code></pre></div>
 <p>Now we just need to change the config file in our github repository. Go to your popgen directory that we made earlier:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Your/Path/to/popgen</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Your/Path/to/popgen</span></code></pre></div>
 <p>then go into the hidden <code>.git</code> directory and edit the config file</p>
-<pre class="nash"><code>cd .git
-nano config</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> .git</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> config</span></code></pre></div>
 <p>and edit the url in <code>remote "origin"</code> to the following, substituting your username:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">url</span> = git@github.com:YOUR_USERNAME/popgen.git</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">url</span> = git@github.com:YOUR_USERNAME/popgen.git</span></code></pre></div>
 <p>We should now be fully configured to push our repository to Github.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div>
+<p>This first time, you will likely need to use <code>git push --set-upstream origin master</code>, but afterwards, you can push new changes using simply <code>git push</code>.</p>
 <p>If that ran successfully, you should be able to use a browser to go look at your repository on Github and see that it contains the content in our local repository on Teton, with the readme file displayed below the list of files.</p>
 <p>This will allow you to publicly share your code and results but Github also has many other functions that enable easy collaboration on projects. We don’t have time to dig into these, but if you go to the IDSC’s <a href="https://wyoibc.github.io/soc2021/">Summer of Code website</a> from this past summer, Vikram has put together several nice tutorials on more advanced uses of Github.</p>
 </body>

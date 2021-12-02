@@ -165,6 +165,7 @@ add the following to the file (again changing my paths to your own), then save a
 ```bash
 Host *
    AddKeysToAgent yes
+   IgnoreUnknown AddKeysToAgent,UseKeychain
    UseKeychain yes
 
 Host seanharrington256.github.com
@@ -172,6 +173,12 @@ Host seanharrington256.github.com
         User git
         PreferredAuthentications publickey
         IdentityFile /home/sharrin2/.ssh/github_key
+```
+
+We also need to change the permissions on this file.
+
+```bash
+chmod 600 ~/.ssh/config
 ```
 
 
@@ -183,7 +190,7 @@ cd /Your/Path/to/popgen
 
 then go into the hidden `.git` directory and edit the config file
 
-```nash
+```bash
 cd .git
 nano config
 ```
@@ -199,6 +206,10 @@ We should now be fully configured to push our repository to Github.
 ```bash
 git push
 ```
+This first time, you will likely need to use `git push --set-upstream origin master`, but afterwards, you can push new changes using simply `git push`.
+
+
+
 
 If that ran successfully, you should be able to use a browser to go look at your repository on Github and see that it contains the content in our local repository on Teton, with the readme file displayed below the list of files.
 
