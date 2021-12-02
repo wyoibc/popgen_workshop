@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2021-12-03" />
+  <title>Selection Scan with BAYESCAN</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="avenir-white.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Selection Scan with BAYESCAN</h1>
+<p class="date">December 3, 2021</p>
+</header>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="#preparing-input-file">1. Preparing Input File</a></p></li>
+<li><p><a href="#run-bayescan">2. Run Bayescan</a></p></li>
+<li><p><a href="#understanding-bayescan-output">3. Understanding Bayescan Output</a></p></li>
+</ul>
+<p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
+<h2 id="preparing-input-file">1. Preparing Input File</h2>
+<p>The file conversion will be similar to how we did it for Structure using <code>PGDSpider</code>. We need the following files:</p>
+<ul>
+<li><p>Population file (<code>ruber.pop</code>)</p></li>
+<li><p>PGDSpider template file (<code>vcf2bscan.spid</code>)</p></li>
+<li><p>Input VCF file (<code>ruber_reduced_ref.vcf</code>)</p></li>
+</ul>
+<p>You can copy these files from: <code>/project/inbre-train/2021_popgen_wkshp/data/Bayescan</code>. Copy all files from this folder.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="bu">cd</span> /path/to/your/gscratch/folder</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">cp</span> -r /project/inbre-train/2021_popgen_wkshp/data/Bayescan .</span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">ls</span> -lh</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre  670 Dec  2 10:56 crovir.pop</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="ex">-rw-r--r--</span> 1 vchhatre  336 Dec  2 10:57 vcf2bscan.sh</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="ex">-rw-r--r--</span> 1 vchhatre 1.5K Dec  2 10:57 vcf2bscan.spid</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="ex">-rw-rw-r--</span> 1 vchhatre 2.6M Dec  2 10:58 ruber_reduced_ref.vcf</span></code></pre></div>
+<p><br><br></p>
+<h3 id="exclude-loci-with-more-than-2-alleles">1.1 Exclude Loci with More than 2 Alleles</h3>
+<p>You might recall that the VCF file contains some loci with more than 2 alleles. We need to exclude those loci from further analysis because they violate the assumptions of the method (Bayescan) we are about to use.</p>
+<ul>
+<li>First, run a check on the vcf file:</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">module</span> load gcc swset perl vcftools</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="ex">vcftools</span> --vcf ruber_reduced_ref.vcf</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="ex">VCFtools</span> - 0.1.14</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">Adam</span> Auton and Anthony Marcketta 2009</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="ex">Parameters</span> as interpreted:</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="ex">--vcf</span> ruber_reduced_ref.vcf</span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="ex">After</span> filtering, kept 33 out of 33 Individuals</span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="ex">After</span> filtering, kept 4562 out of a possible 4562 Sites</span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="ex">Run</span> Time = 0.00 seconds</span></code></pre></div>
+<ul>
+<li>Then check for loci that have exactly two alleles</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="ex">vcftools</span> --vcf ruber_reduced_ref.vcf --min-alleles 2 --max-alleles 2</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="ex">VCFtools</span> - 0.1.14</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">Adam</span> Auton and Anthony Marcketta 2009</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="ex">Parameters</span> as interpreted:</span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="ex">--vcf</span> ruber_reduced_ref.vcf</span>
+<span id="cb3-9"><a href="#cb3-9"></a>    <span class="ex">--max-alleles</span> 2</span>
+<span id="cb3-10"><a href="#cb3-10"></a>    <span class="ex">--min-alleles</span> 2</span>
+<span id="cb3-11"><a href="#cb3-11"></a></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="ex">After</span> filtering, kept 33 out of 33 Individuals</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="ex">After</span> filtering, kept 4502 out of a possible 4562 Sites</span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="ex">Run</span> Time = 0.00 seconds</span></code></pre></div>
+<ul>
+<li>So it appears that there are about 60 sites with more than 2 alleles. Let’s exclude those.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="ex">vcftools</span> --vcf ruber_reduced_ref.vcf --min-alleles 2 --max-alleles 2 --recode --out ruber_4502snp</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="ex">VCFtools</span> - 0.1.14</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">Adam</span> Auton and Anthony Marcketta 2009</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="ex">Parameters</span> as interpreted:</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    <span class="ex">--vcf</span> ruber_reduced_ref.vcf</span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="ex">--max-alleles</span> 2</span>
+<span id="cb4-10"><a href="#cb4-10"></a>    <span class="ex">--min-alleles</span> 2</span>
+<span id="cb4-11"><a href="#cb4-11"></a>    <span class="ex">--out</span> ruber_4502snp</span>
+<span id="cb4-12"><a href="#cb4-12"></a>    <span class="ex">--recode</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="ex">After</span> filtering, kept 33 out of 33 Individuals</span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="ex">Outputting</span> VCF file...</span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="ex">After</span> filtering, kept 4502 out of a possible 4562 Sites</span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="ex">Run</span> Time = 0.00 seconds</span>
+<span id="cb4-18"><a href="#cb4-18"></a></span></code></pre></div>
+<ul>
+<li>Check to make sure it worked:</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="ex">vcftools</span> --vcf ruber_4502snp.recode.vcf </span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="ex">VCFtools</span> - 0.1.14</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="kw">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">Adam</span> Auton and Anthony Marcketta 2009</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="ex">Parameters</span> as interpreted:</span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="ex">--vcf</span> ruber_4502snp.recode.vcf</span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="ex">After</span> filtering, kept 33 out of 33 Individuals</span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="ex">After</span> filtering, kept 4502 out of a possible 4502 Sites</span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="ex">Run</span> Time = 0.00 seconds</span>
+<span id="cb5-13"><a href="#cb5-13"></a></span></code></pre></div>
+<ul>
+<li>Good! Let’s quickly rename this file to shorten its name:</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">mv</span> ruber_4502snp.recode.vcf ruber_4502snp.vcf</span></code></pre></div>
+<p><br><br></p>
+<h3 id="check-popfile">1.2 Check Popfile</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">vim</span> crovir.pop</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="ex">SD_Field_0201</span>   north</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="ex">SD_Field_0255</span>   south</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="ex">SD_Field_0386</span>   south</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="ex">SD_Field_0491</span>   south</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="ex">SD_Field_0492</span>   admixed</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="ex">SD_Field_0493</span>   south</span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="ex">SD_Field_0557</span>   south</span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="ex">SD_Field_0598</span>   admixed</span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="ex">SD_Field_0599</span>   south</span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="ex">SD_Field_0642</span>   admixed</span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="ex">SD_Field_0666</span>   admixed</span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="ex">SD_Field_0983</span>   north</span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="ex">SD_Field_1079</span>   south</span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="ex">SD_Field_1205</span>   north</span>
+<span id="cb7-17"><a href="#cb7-17"></a><span class="ex">SD_Field_1220</span>   south</span>
+<span id="cb7-18"><a href="#cb7-18"></a><span class="ex">SD_Field_1225</span>   south</span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="ex">SD_Field_1226</span>   south</span>
+<span id="cb7-20"><a href="#cb7-20"></a><span class="ex">SD_Field_1381</span>   north</span>
+<span id="cb7-21"><a href="#cb7-21"></a><span class="ex">SD_Field_1878</span>   north</span>
+<span id="cb7-22"><a href="#cb7-22"></a><span class="ex">SD_Field_1880</span>   north</span>
+<span id="cb7-23"><a href="#cb7-23"></a><span class="ex">SD_Field_1899</span>   north</span>
+<span id="cb7-24"><a href="#cb7-24"></a><span class="ex">SD_Field_1961</span>   south</span>
+<span id="cb7-25"><a href="#cb7-25"></a><span class="ex">SD_Field_1988</span>   south</span>
+<span id="cb7-26"><a href="#cb7-26"></a><span class="ex">SD_Field_1991</span>   south</span>
+<span id="cb7-27"><a href="#cb7-27"></a><span class="ex">SD_Field_2127</span>   north</span>
+<span id="cb7-28"><a href="#cb7-28"></a><span class="ex">SD_Field_2287</span>   admixed</span>
+<span id="cb7-29"><a href="#cb7-29"></a><span class="ex">SD_Field_2383</span>   south</span>
+<span id="cb7-30"><a href="#cb7-30"></a><span class="ex">SD_Field_2427</span>   south</span>
+<span id="cb7-31"><a href="#cb7-31"></a><span class="ex">SD_Field_2789</span>   north</span>
+<span id="cb7-32"><a href="#cb7-32"></a><span class="ex">SD_Field_2914</span>   south</span>
+<span id="cb7-33"><a href="#cb7-33"></a><span class="ex">SD_Field_2968</span>   north</span>
+<span id="cb7-34"><a href="#cb7-34"></a><span class="ex">SD_Field_3027</span>   north</span>
+<span id="cb7-35"><a href="#cb7-35"></a><span class="ex">SD_Field_3124</span>   north</span></code></pre></div>
+<ul>
+<li>Note that after conversion to Bayescan format, the order of individuals may change as they will be grouped by populations.</li>
+</ul>
+<p><br><br></p>
+<h3 id="modify-the-spid-file">1.3 Modify the SPID File</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a><span class="ex">vim</span> vcf2bscan.spid</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># VCF Parser questions</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="va">PARSER_FORMAT=</span>VCF</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># Only output SNPs with a phred-scaled quality of at least:</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="va">VCF_PARSER_QUAL_QUESTION=</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co"># Select population definition file:</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="va">VCF_PARSER_POP_FILE_QUESTION=</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co"># What is the ploidy of the data?</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="va">VCF_PARSER_PLOIDY_QUESTION=</span>DIPLOID</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># Do you want to include a file with population definitions?</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="va">VCF_PARSER_POP_QUESTION=</span>true</span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co"># Output genotypes as missing if the phred-scale genotype quality is below:</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="va">VCF_PARSER_GTQUAL_QUESTION=</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co"># Do you want to include non-polymorphic SNPs?</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="va">VCF_PARSER_MONOMORPHIC_QUESTION=</span>FALSE</span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co"># Only output following individuals (ind1, ind2, ind4, ...):</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="va">VCF_PARSER_IND_QUESTION=</span></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co"># Only input following regions (refSeqName:start:end, multiple regions: whitespace separated):</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="va">VCF_PARSER_REGION_QUESTION=</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co"># Output genotypes as missing if the read depth of a position for the sample is below:</span></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="va">VCF_PARSER_READ_QUESTION=</span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co"># Take most likely genotype if &quot;PL&quot; or &quot;GL&quot; is given in the genotype field?</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="va">VCF_PARSER_PL_QUESTION=</span>false</span>
+<span id="cb9-24"><a href="#cb9-24"></a><span class="co"># Do you want to exclude loci with only missing data?</span></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="va">VCF_PARSER_EXC_MISSING_LOCI_QUESTION=</span>true</span>
+<span id="cb9-26"><a href="#cb9-26"></a></span>
+<span id="cb9-27"><a href="#cb9-27"></a><span class="co"># GESTE / BayeScan Writer questions</span></span>
+<span id="cb9-28"><a href="#cb9-28"></a><span class="va">WRITER_FORMAT=</span>GESTE_BAYE_SCAN</span>
+<span id="cb9-29"><a href="#cb9-29"></a></span>
+<span id="cb9-30"><a href="#cb9-30"></a><span class="co"># Specify which data type should be included in the GESTE / BayeScan file  (GESTE / BayeScan can only analyze one data type per file):</span></span>
+<span id="cb9-31"><a href="#cb9-31"></a><span class="va">GESTE_BAYE_SCAN_WRITER_DATA_TYPE_QUESTION=</span>SNP</span></code></pre></div>
+<p><br><br></p>
+<h3 id="modify-the-vcf2bscan.sh-script">1.4 Modify the <code>vcf2bscan.sh</code> Script</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1"></a><span class="ex">vim</span> vcf2bscan.sh</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="ex">pgdspider</span>   -inputfile      \</span>
+<span id="cb11-4"><a href="#cb11-4"></a>        -inputformat VCF    \</span>
+<span id="cb11-5"><a href="#cb11-5"></a>        -outputfile         \</span>
+<span id="cb11-6"><a href="#cb11-6"></a>        -outputformat GESTE_BAYE_SCAN   \</span>
+<span id="cb11-7"><a href="#cb11-7"></a>        -spid vcf2bscan.spid</span></code></pre></div>
+<p><br></p>
+<p>Then run the script:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="ex">sbatch</span> vcf2bscan.sh</span></code></pre></div>
+<p><br><br></p>
+<h3 id="bayescan-input-file">1.5 Bayescan Input File</h3>
+<p>Let’s take a look at the <code>ruber.bayescan</code> file</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a><span class="ex">vim</span> ruber.bayescan</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a>[<span class="ex">loci</span>]=4502     </span>
+<span id="cb14-2"><a href="#cb14-2"></a> </span>
+<span id="cb14-3"><a href="#cb14-3"></a>[<span class="ex">populations</span>]=3 </span>
+<span id="cb14-4"><a href="#cb14-4"></a> </span>
+<span id="cb14-5"><a href="#cb14-5"></a>[<span class="ex">pop</span>]=1 </span>
+<span id="cb14-6"><a href="#cb14-6"></a> <span class="ex">1</span>      24      2       16 8</span>
+<span id="cb14-7"><a href="#cb14-7"></a> <span class="ex">2</span>      24      2       0 24</span>
+<span id="cb14-8"><a href="#cb14-8"></a> <span class="ex">3</span>      24      2       23 1</span>
+<span id="cb14-9"><a href="#cb14-9"></a> <span class="ex">4</span>      24      2       24 0</span>
+<span id="cb14-10"><a href="#cb14-10"></a> <span class="ex">5</span>      18      2       0 18</span>
+<span id="cb14-11"><a href="#cb14-11"></a> <span class="ex">6</span>      8       2       0 8 </span>
+<span id="cb14-12"><a href="#cb14-12"></a> <span class="ex">7</span>      4       2       1 3 </span>
+<span id="cb14-13"><a href="#cb14-13"></a> <span class="ex">8</span>      24      2       0 24</span>
+<span id="cb14-14"><a href="#cb14-14"></a> <span class="ex">9</span>      24      2       24 0</span>
+<span id="cb14-15"><a href="#cb14-15"></a> <span class="ex">10</span>     24      2       4 20</span>
+<span id="cb14-16"><a href="#cb14-16"></a> <span class="ex">11</span>     24      2       13 11</span>
+<span id="cb14-17"><a href="#cb14-17"></a> <span class="ex">12</span>     24      2       1 23</span>
+<span id="cb14-18"><a href="#cb14-18"></a> <span class="ex">13</span>     2       2       0 2 </span>
+<span id="cb14-19"><a href="#cb14-19"></a> <span class="ex">14</span>     22      2       0 22</span>
+<span id="cb14-20"><a href="#cb14-20"></a> <span class="ex">15</span>     24      2       0 24</span>
+<span id="cb14-21"><a href="#cb14-21"></a> <span class="ex">16</span>     10      2       10 0</span>
+<span id="cb14-22"><a href="#cb14-22"></a> <span class="ex">17</span>     20      2       7 13</span>
+<span id="cb14-23"><a href="#cb14-23"></a> <span class="ex">18</span>     22      2       19 3</span></code></pre></div>
+<ul>
+<li><p>This is a partial view of the file. The fields are as follows:</p>
+<ol type="1">
+<li>Locus number</li>
+<li>Number of genes (2x the number of diploid individuals in that population)</li>
+<li>Number of alleles found in that population at that locus</li>
+<li>Number of copies of each of the two alleles in the given population</li>
+</ol></li>
+<li><p>The number in the third column must always be 2. Our filtering of the vcf above was done precisely for this purpose. Still, you can once again verify that this number is 2 throughout:</p></li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">sed</span> -n 6,4507p ruber.bayescan <span class="kw">|</span> <span class="fu">cut</span> -f3 <span class="kw">|</span> <span class="fu">sort</span> <span class="kw">|</span> <span class="fu">uniq</span> -c</span>
+<span id="cb15-2"><a href="#cb15-2"></a></span>
+<span id="cb15-3"><a href="#cb15-3"></a>   <span class="ex">4502</span>  2</span></code></pre></div>
+<ul>
+<li>Good! Now we can proceed with Bayescan analysis.</li>
+</ul>
+<p><br><br><br></p>
+<h2 id="run-bayescan">2. Run Bayescan</h2>
+<ul>
+<li>Let’s check the commandline parameters that Bayescan provides:</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">module</span> load gcc swset bayescan</span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="ex">bayescan</span> -h</span>
+<span id="cb16-4"><a href="#cb16-4"></a></span>
+<span id="cb16-5"><a href="#cb16-5"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-6"><a href="#cb16-6"></a> <span class="kw">|</span> <span class="ex">BayeScan</span> 2.0 usage:     <span class="kw">|</span> </span>
+<span id="cb16-7"><a href="#cb16-7"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-8"><a href="#cb16-8"></a> <span class="ex">-help</span>        Prints this help </span>
+<span id="cb16-9"><a href="#cb16-9"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-10"><a href="#cb16-10"></a> <span class="kw">|</span> <span class="ex">Input</span>                   <span class="kw">|</span> </span>
+<span id="cb16-11"><a href="#cb16-11"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-12"><a href="#cb16-12"></a> <span class="ex">alleles.txt</span>  Name of the genotypes data input file </span>
+<span id="cb16-13"><a href="#cb16-13"></a> <span class="ex">-d</span> discarded Optional input file containing list of loci to discard</span>
+<span id="cb16-14"><a href="#cb16-14"></a> <span class="ex">-snp</span>         Use SNP genotypes matrix</span>
+<span id="cb16-15"><a href="#cb16-15"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-16"><a href="#cb16-16"></a> <span class="kw">|</span> <span class="ex">Output</span>                  <span class="kw">|</span> </span>
+<span id="cb16-17"><a href="#cb16-17"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-18"><a href="#cb16-18"></a> <span class="ex">-od</span> .        Output file directory, default is the same as program file</span>
+<span id="cb16-19"><a href="#cb16-19"></a> <span class="ex">-o</span> alleles   Output file prefix, default is input file without the extension</span>
+<span id="cb16-20"><a href="#cb16-20"></a> <span class="ex">-fstat</span>       Only estimate F-stats (no selection)</span>
+<span id="cb16-21"><a href="#cb16-21"></a> <span class="ex">-all_trace</span>   Write out MCMC trace also for alpha paremeters (can be a very large file)</span>
+<span id="cb16-22"><a href="#cb16-22"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-23"><a href="#cb16-23"></a> <span class="kw">|</span> <span class="ex">Parameters</span> of the chain <span class="kw">|</span> </span>
+<span id="cb16-24"><a href="#cb16-24"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-25"><a href="#cb16-25"></a> <span class="ex">-threads</span> n   Number of threads used, default is number of cpu available </span>
+<span id="cb16-26"><a href="#cb16-26"></a> <span class="ex">-n</span> 5000      Number of outputted iterations, default is 5000 </span>
+<span id="cb16-27"><a href="#cb16-27"></a> <span class="ex">-thin</span> 10     Thinning interval size, default is 10 </span>
+<span id="cb16-28"><a href="#cb16-28"></a> <span class="ex">-nbp</span> 20      Number of pilot runs, default is 20 </span>
+<span id="cb16-29"><a href="#cb16-29"></a> <span class="ex">-pilot</span> 5000  Length of pilot runs, default is 5000 </span>
+<span id="cb16-30"><a href="#cb16-30"></a> <span class="ex">-burn</span> 50000  Burn-in length, default is 50000 </span>
+<span id="cb16-31"><a href="#cb16-31"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-32"><a href="#cb16-32"></a> <span class="kw">|</span> <span class="ex">Parameters</span> of the model <span class="kw">|</span> </span>
+<span id="cb16-33"><a href="#cb16-33"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-34"><a href="#cb16-34"></a> <span class="ex">-pr_odds</span> 10  Prior odds for the neutral model, default is 10 </span>
+<span id="cb16-35"><a href="#cb16-35"></a> <span class="ex">-lb_fis</span> 0    Lower bound for uniform prior on Fis (dominant data), <span class="ex">default</span> is 0</span>
+<span id="cb16-36"><a href="#cb16-36"></a> <span class="ex">-hb_fis</span> 1    Higher bound for uniform prior on Fis (dominant data), <span class="ex">default</span> is 1</span>
+<span id="cb16-37"><a href="#cb16-37"></a> <span class="ex">-beta_fis</span>    Optional beta prior for Fis (dominant data, m_fis and sd_fis need to be set)</span>
+<span id="cb16-38"><a href="#cb16-38"></a> <span class="ex">-m_fis</span> 0.05  Optional mean for beta prior on Fis (dominant data with -beta_fis)</span>
+<span id="cb16-39"><a href="#cb16-39"></a> <span class="ex">-sd_fis</span> 0.01 Optional std. deviation for beta prior on Fis (dominant data with -beta_fis)</span>
+<span id="cb16-40"><a href="#cb16-40"></a> <span class="ex">-aflp_pc</span> 0.1 Threshold for the recessive genotype as a fraction of maximum band intensity, default is 0.1</span>
+<span id="cb16-41"><a href="#cb16-41"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-42"><a href="#cb16-42"></a> <span class="kw">|</span> <span class="ex">Output</span> files            <span class="kw">|</span> </span>
+<span id="cb16-43"><a href="#cb16-43"></a> <span class="ex">---------------------------</span> </span>
+<span id="cb16-44"><a href="#cb16-44"></a> <span class="ex">-out_pilot</span>   Optional output file for pilot runs</span>
+<span id="cb16-45"><a href="#cb16-45"></a> <span class="ex">-out_freq</span>    Optional output file for allele frequencies</span></code></pre></div>
+<ul>
+<li><p>Here are the parameters we will be using:</p>
+<ul>
+<li><code>-snp</code> indicates that we are using SNP data</li>
+<li><code>-od</code> specifies output directory.</li>
+<li><code>-threads n</code> We will use 16 threads</li>
+<li><code>-n 5000</code> Similar to structure MCMC. We will set this to 20000</li>
+<li><code>-thin 10</code> Keep this as is</li>
+<li><code>-nbp 20</code> Keep as is</li>
+<li><code>-pilot 5000</code> This is fine as well</li>
+<li><code>-burn 50000</code> Keep as is</li>
+<li><code>-pr_odds 10</code> Change this to 1000. 10 is too high a number</li>
+<li><code>-out_freq</code> Obtain output allele frequencies in addition to selection scan</li>
+</ul></li>
+<li><p>Let’s make a script:</p></li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="ex">vim</span> run_bayescan.sh</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="ex">module</span> load gcc swset bayescan/2.1</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="ex">bayescan</span> ruber.bayescan -snp \</span>
+<span id="cb18-6"><a href="#cb18-6"></a>    -od ruber_output    \</span>
+<span id="cb18-7"><a href="#cb18-7"></a>    -threads 16 \</span>
+<span id="cb18-8"><a href="#cb18-8"></a>    -n 5000 \</span>
+<span id="cb18-9"><a href="#cb18-9"></a>    -thin 10    \</span>
+<span id="cb18-10"><a href="#cb18-10"></a>    -nbp 20 \</span>
+<span id="cb18-11"><a href="#cb18-11"></a>    -pilot 5000 \</span>
+<span id="cb18-12"><a href="#cb18-12"></a>    -burn 50000 \</span>
+<span id="cb18-13"><a href="#cb18-13"></a>    -pr_odds 1000   \</span>
+<span id="cb18-14"><a href="#cb18-14"></a>    -out_freq   </span></code></pre></div>
+<ul>
+<li>Make the output folder and run the script:</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">mkdir</span> ruber_output</span>
+<span id="cb19-3"><a href="#cb19-3"></a></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="ex">sbatch</span> run_bayescan.sh</span></code></pre></div>
+</body>
+</html>
