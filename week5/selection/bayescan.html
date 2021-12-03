@@ -92,6 +92,7 @@
 <li><p><a href="#preparing-input-file">1. Preparing Input File</a></p></li>
 <li><p><a href="#run-bayescan">2. Run Bayescan</a></p></li>
 <li><p><a href="#understanding-bayescan-output">3. Understanding Bayescan Output</a></p></li>
+<li><p><a href="#visualizing-outliers">4. Visualizing Outliers</a></p></li>
 </ul>
 <p><br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br> <br><br><br><br><br><br></p>
 <h2 id="preparing-input-file">1. Preparing Input File</h2>
@@ -105,7 +106,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">cd</span> /path/to/your/gscratch/folder</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="fu">cp</span> -r /project/inbre-train/2021_popgen_wkshp/data/Bayescan .</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="fu">cp</span> /project/inbre-train/2021_popgen_wkshp/data/Bayescan/data/* .</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="fu">ls</span> -lh</span>
@@ -468,5 +469,305 @@
 <ul>
 <li>After the run finishes, check the results to see if any loci are candidates for selection.</li>
 </ul>
+<p><br><br></p>
+<h2 id="visualizing-outliers">4. Visualizing Outliers</h2>
+<p>Because our current data set does not seem to have any outliers showing extreme allele frequency differences, we will switch to a different data set for illustration purposes. You can find this data inside the <code>data/</code> folder for this week on Github.</p>
+<p><br></p>
+<h3 id="download-the-data">4.1 Download the Data</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="bu">cd</span> Bayescan</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a><span class="fu">wget</span> https://github.com/wyoibc/popgen_workshop/tree/master/week5/selection/data/test_baye_fst.txt</span></code></pre></div>
+<p><br><br></p>
+<h3 id="check-for-outliers">4.2 Check for Outliers</h3>
+<ul>
+<li>Import the data into R</li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a>test &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;test.baye_fst.txt&quot;</span>, <span class="dt">header=</span>T)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a><span class="kw">head</span>(test)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true"></a>        prob  log10.PO.     qval       alpha      fst</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true"></a><span class="dv">1</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997644</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true"></a><span class="dv">2</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true"></a><span class="dv">3</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true"></a><span class="dv">4</span> <span class="fl">0.00020004</span>    <span class="fl">-3.6988</span> <span class="fl">0.994060</span>  <span class="fl">1.5625e-04</span> <span class="fl">0.022324</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true"></a><span class="dv">5</span> <span class="fl">0.00020004</span>    <span class="fl">-3.6988</span> <span class="fl">0.994060</span> <span class="fl">-5.8927e-05</span> <span class="fl">0.022318</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true"></a><span class="dv">6</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span></code></pre></div>
+<ul>
+<li>How many loci in this data set?</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a><span class="kw">dim</span>(test)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true"></a>[<span class="dv">1</span>] <span class="dv">107309</span>      <span class="dv">5</span></span></code></pre></div>
+<ul>
+<li>What is the range of corrected P values (i.e. q values)?</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a><span class="kw">range</span>(test<span class="op">$</span>qval)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a>[<span class="dv">1</span>] <span class="fl">0.000000</span> <span class="fl">0.997644</span></span></code></pre></div>
+<ul>
+<li>Let’s make a quick histogram of qvalues:</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true"></a><span class="kw">ggplot</span>(<span class="dt">data=</span>test) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="kw">aes</span>(<span class="dt">x=</span>qval), <span class="dt">binwidth=</span><span class="fl">0.01</span>)</span></code></pre></div>
+<ul>
+<li>It’s hard to read this histogram because a fraction of the loci distributed in the significant region is too small compared to the number of non-significant loci. Let’s check manually.</li>
+</ul>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a><span class="kw">sum</span>(test<span class="op">$</span>qval <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true"></a>[<span class="dv">1</span>] <span class="dv">222</span></span></code></pre></div>
+<ul>
+<li>What about a more stringent qval, say 0.001?</li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true"></a><span class="kw">sum</span>(test<span class="op">$</span>qval <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.001</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true"></a><span class="dv">145</span></span></code></pre></div>
+<ul>
+<li>Let’s find out more data on these significant loci:</li>
+</ul>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true"></a><span class="kw">subset</span>(test, qval <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.001</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true"></a>         prob log10.PO.       qval  alpha      fst</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true"></a><span class="dv">1566</span>   <span class="fl">0.9918</span>    <span class="fl">2.0825</span> <span class="fl">4.6531e-04</span> <span class="fl">1.7248</span> <span class="fl">0.114760</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true"></a><span class="dv">1568</span>   <span class="fl">0.9882</span>    <span class="fl">1.9229</span> <span class="fl">9.2708e-04</span> <span class="fl">1.7285</span> <span class="fl">0.115480</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true"></a><span class="dv">1700</span>   <span class="fl">0.9892</span>    <span class="fl">1.9618</span> <span class="fl">8.5156e-04</span> <span class="fl">1.7330</span> <span class="fl">0.115720</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true"></a><span class="dv">1702</span>   <span class="fl">0.9964</span>    <span class="fl">2.4420</span> <span class="fl">2.5378e-04</span> <span class="fl">1.7605</span> <span class="fl">0.117830</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true"></a><span class="dv">3159</span>   <span class="fl">0.9912</span>    <span class="fl">2.0516</span> <span class="fl">5.8297e-04</span> <span class="fl">1.6601</span> <span class="fl">0.108270</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true"></a><span class="dv">3192</span>   <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9705</span> <span class="fl">0.138040</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true"></a><span class="dv">6013</span>   <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.8917</span> <span class="fl">0.278710</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true"></a><span class="dv">6650</span>   <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0830</span> <span class="fl">0.153020</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true"></a><span class="dv">6931</span>   <span class="fl">0.9996</span>    <span class="fl">3.3977</span> <span class="fl">2.2613e-05</span> <span class="fl">2.2409</span> <span class="fl">0.174450</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true"></a><span class="dv">12697</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8961</span> <span class="fl">0.131350</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true"></a><span class="dv">14156</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1488</span> <span class="fl">0.159040</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true"></a><span class="dv">14171</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2797</span> <span class="fl">0.176420</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true"></a><span class="dv">14201</span>  <span class="fl">0.9998</span>    <span class="fl">3.6988</span> <span class="fl">9.0108e-06</span> <span class="fl">1.7465</span> <span class="fl">0.116600</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true"></a><span class="dv">14954</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.6822</span> <span class="fl">0.239490</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true"></a><span class="dv">18125</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1727</span> <span class="fl">0.164620</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true"></a><span class="dv">18300</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9129</span> <span class="fl">0.131840</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true"></a><span class="dv">18322</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.6018</span> <span class="fl">0.101940</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true"></a><span class="dv">18394</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8083</span> <span class="fl">0.121450</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true"></a><span class="dv">18396</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8114</span> <span class="fl">0.121840</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true"></a><span class="dv">24167</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2193</span> <span class="fl">0.167970</span></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true"></a><span class="dv">24395</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8848</span> <span class="fl">0.128070</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true"></a><span class="dv">26773</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7408</span> <span class="fl">0.114220</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true"></a><span class="dv">27418</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.4339</span> <span class="fl">0.196440</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true"></a><span class="dv">27423</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0684</span> <span class="fl">0.148980</span></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true"></a><span class="dv">31272</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.4578</span> <span class="fl">0.203560</span></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true"></a><span class="dv">34814</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8200</span> <span class="fl">0.122140</span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true"></a><span class="dv">34830</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8360</span> <span class="fl">0.124590</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true"></a><span class="dv">36086</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8240</span> <span class="fl">0.121930</span></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true"></a><span class="dv">39272</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.5160</span> <span class="fl">0.396580</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true"></a><span class="dv">39876</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9194</span> <span class="fl">0.133520</span></span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true"></a><span class="dv">39889</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8886</span> <span class="fl">0.130840</span></span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true"></a><span class="dv">39890</span>  <span class="fl">0.9994</span>    <span class="fl">3.2215</span> <span class="fl">3.7296e-05</span> <span class="fl">1.8842</span> <span class="fl">0.130450</span></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true"></a><span class="dv">39910</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8167</span> <span class="fl">0.123000</span></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true"></a><span class="dv">42021</span>  <span class="fl">0.9974</span>    <span class="fl">2.5838</span> <span class="fl">2.0762e-04</span> <span class="fl">2.3243</span> <span class="fl">0.188730</span></span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true"></a><span class="dv">42351</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1141</span> <span class="fl">0.154780</span></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true"></a><span class="dv">43349</span>  <span class="fl">0.9984</span>    <span class="fl">2.7951</span> <span class="fl">1.0955e-04</span> <span class="fl">3.3251</span> <span class="fl">0.364780</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true"></a><span class="dv">43516</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7734</span> <span class="fl">0.118360</span></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true"></a><span class="dv">43760</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8764</span> <span class="fl">0.129290</span></span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true"></a><span class="dv">43771</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1364</span> <span class="fl">0.159980</span></span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true"></a><span class="dv">43775</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1471</span> <span class="fl">0.161570</span></span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true"></a><span class="dv">43778</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1421</span> <span class="fl">0.160850</span></span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true"></a><span class="dv">45050</span>  <span class="fl">0.9998</span>    <span class="fl">3.6988</span> <span class="fl">9.0108e-06</span> <span class="fl">1.7325</span> <span class="fl">0.114640</span></span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true"></a><span class="dv">45053</span>  <span class="fl">0.9926</span>    <span class="fl">2.1275</span> <span class="fl">4.0884e-04</span> <span class="fl">1.6045</span> <span class="fl">0.103530</span></span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true"></a><span class="dv">46669</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8368</span> <span class="fl">0.126170</span></span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true"></a><span class="dv">46861</span>  <span class="fl">0.9986</span>    <span class="fl">2.8532</span> <span class="fl">8.5501e-05</span> <span class="fl">1.8843</span> <span class="fl">0.130930</span></span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true"></a><span class="dv">48480</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8787</span> <span class="fl">0.129220</span></span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true"></a><span class="dv">49162</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7046</span> <span class="fl">0.111360</span></span>
+<span id="cb36-51"><a href="#cb36-51" aria-hidden="true"></a><span class="dv">50013</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8834</span> <span class="fl">0.128270</span></span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true"></a><span class="dv">51912</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7774</span> <span class="fl">0.118170</span></span>
+<span id="cb36-53"><a href="#cb36-53" aria-hidden="true"></a><span class="dv">51917</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8019</span> <span class="fl">0.120470</span></span>
+<span id="cb36-54"><a href="#cb36-54" aria-hidden="true"></a><span class="dv">51920</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8123</span> <span class="fl">0.121500</span></span>
+<span id="cb36-55"><a href="#cb36-55" aria-hidden="true"></a><span class="dv">51936</span>  <span class="fl">0.9976</span>    <span class="fl">2.6187</span> <span class="fl">1.8935e-04</span> <span class="fl">1.5646</span> <span class="fl">0.099173</span></span>
+<span id="cb36-56"><a href="#cb36-56" aria-hidden="true"></a><span class="dv">53114</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7699</span> <span class="fl">0.117520</span></span>
+<span id="cb36-57"><a href="#cb36-57" aria-hidden="true"></a><span class="dv">54009</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.6047</span> <span class="fl">0.228290</span></span>
+<span id="cb36-58"><a href="#cb36-58" aria-hidden="true"></a><span class="dv">54544</span>  <span class="fl">0.9990</span>    <span class="fl">2.9995</span> <span class="fl">6.3947e-05</span> <span class="fl">1.7931</span> <span class="fl">0.120470</span></span>
+<span id="cb36-59"><a href="#cb36-59" aria-hidden="true"></a><span class="dv">57035</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5100</span> <span class="fl">0.212890</span></span>
+<span id="cb36-60"><a href="#cb36-60" aria-hidden="true"></a><span class="dv">58556</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1872</span> <span class="fl">0.168830</span></span>
+<span id="cb36-61"><a href="#cb36-61" aria-hidden="true"></a><span class="dv">58559</span>  <span class="fl">0.9998</span>    <span class="fl">3.6988</span> <span class="fl">9.0108e-06</span> <span class="fl">1.9893</span> <span class="fl">0.144050</span></span>
+<span id="cb36-62"><a href="#cb36-62" aria-hidden="true"></a><span class="dv">59329</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.6750</span> <span class="fl">0.108510</span></span>
+<span id="cb36-63"><a href="#cb36-63" aria-hidden="true"></a><span class="dv">59877</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8073</span> <span class="fl">0.121550</span></span>
+<span id="cb36-64"><a href="#cb36-64" aria-hidden="true"></a><span class="dv">59878</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8124</span> <span class="fl">0.122040</span></span>
+<span id="cb36-65"><a href="#cb36-65" aria-hidden="true"></a><span class="dv">61797</span>  <span class="fl">0.9998</span>    <span class="fl">3.6988</span> <span class="fl">9.0108e-06</span> <span class="fl">2.4507</span> <span class="fl">0.205690</span></span>
+<span id="cb36-66"><a href="#cb36-66" aria-hidden="true"></a><span class="dv">66090</span>  <span class="fl">0.9998</span>    <span class="fl">3.6988</span> <span class="fl">9.0108e-06</span> <span class="fl">1.8892</span> <span class="fl">0.131120</span></span>
+<span id="cb36-67"><a href="#cb36-67" aria-hidden="true"></a><span class="dv">66817</span>  <span class="fl">0.9992</span>    <span class="fl">3.0965</span> <span class="fl">5.6210e-05</span> <span class="fl">1.7872</span> <span class="fl">0.120200</span></span>
+<span id="cb36-68"><a href="#cb36-68" aria-hidden="true"></a><span class="dv">70550</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5538</span> <span class="fl">0.215940</span></span>
+<span id="cb36-69"><a href="#cb36-69" aria-hidden="true"></a><span class="dv">70551</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">4.2592</span> <span class="fl">0.559140</span></span>
+<span id="cb36-70"><a href="#cb36-70" aria-hidden="true"></a><span class="dv">70553</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.1107</span> <span class="fl">0.311520</span></span>
+<span id="cb36-71"><a href="#cb36-71" aria-hidden="true"></a><span class="dv">70554</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.0005</span> <span class="fl">0.290330</span></span>
+<span id="cb36-72"><a href="#cb36-72" aria-hidden="true"></a><span class="dv">70556</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2939</span> <span class="fl">0.177830</span></span>
+<span id="cb36-73"><a href="#cb36-73" aria-hidden="true"></a><span class="dv">70557</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">4.0050</span> <span class="fl">0.502850</span></span>
+<span id="cb36-74"><a href="#cb36-74" aria-hidden="true"></a><span class="dv">70561</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.0837</span> <span class="fl">0.309730</span></span>
+<span id="cb36-75"><a href="#cb36-75" aria-hidden="true"></a><span class="dv">70564</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.1913</span> <span class="fl">0.330880</span></span>
+<span id="cb36-76"><a href="#cb36-76" aria-hidden="true"></a><span class="dv">70578</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5996</span> <span class="fl">0.220910</span></span>
+<span id="cb36-77"><a href="#cb36-77" aria-hidden="true"></a><span class="dv">70606</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.3432</span> <span class="fl">0.184770</span></span>
+<span id="cb36-78"><a href="#cb36-78" aria-hidden="true"></a><span class="dv">70607</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.3465</span> <span class="fl">0.185260</span></span>
+<span id="cb36-79"><a href="#cb36-79" aria-hidden="true"></a><span class="dv">70616</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2087</span> <span class="fl">0.170270</span></span>
+<span id="cb36-80"><a href="#cb36-80" aria-hidden="true"></a><span class="dv">70617</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1985</span> <span class="fl">0.167620</span></span>
+<span id="cb36-81"><a href="#cb36-81" aria-hidden="true"></a><span class="dv">70656</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0993</span> <span class="fl">0.153160</span></span>
+<span id="cb36-82"><a href="#cb36-82" aria-hidden="true"></a><span class="dv">70684</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5772</span> <span class="fl">0.218370</span></span>
+<span id="cb36-83"><a href="#cb36-83" aria-hidden="true"></a><span class="dv">70738</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1389</span> <span class="fl">0.159600</span></span>
+<span id="cb36-84"><a href="#cb36-84" aria-hidden="true"></a><span class="dv">71234</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9073</span> <span class="fl">0.131420</span></span>
+<span id="cb36-85"><a href="#cb36-85" aria-hidden="true"></a><span class="dv">71265</span>  <span class="fl">0.9992</span>    <span class="fl">3.0965</span> <span class="fl">5.6210e-05</span> <span class="fl">1.7616</span> <span class="fl">0.117380</span></span>
+<span id="cb36-86"><a href="#cb36-86" aria-hidden="true"></a><span class="dv">71646</span>  <span class="fl">0.9996</span>    <span class="fl">3.3977</span> <span class="fl">2.2613e-05</span> <span class="fl">1.7175</span> <span class="fl">0.113440</span></span>
+<span id="cb36-87"><a href="#cb36-87" aria-hidden="true"></a><span class="dv">71734</span>  <span class="fl">0.9914</span>    <span class="fl">2.0617</span> <span class="fl">5.2385e-04</span> <span class="fl">1.5526</span> <span class="fl">0.098594</span></span>
+<span id="cb36-88"><a href="#cb36-88" aria-hidden="true"></a><span class="dv">71796</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9577</span> <span class="fl">0.137990</span></span>
+<span id="cb36-89"><a href="#cb36-89" aria-hidden="true"></a><span class="dv">72584</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0383</span> <span class="fl">0.146730</span></span>
+<span id="cb36-90"><a href="#cb36-90" aria-hidden="true"></a><span class="dv">73227</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.6270</span> <span class="fl">0.104190</span></span>
+<span id="cb36-91"><a href="#cb36-91" aria-hidden="true"></a><span class="dv">74211</span>  <span class="fl">0.9996</span>    <span class="fl">3.3977</span> <span class="fl">2.2613e-05</span> <span class="fl">1.8806</span> <span class="fl">0.129400</span></span>
+<span id="cb36-92"><a href="#cb36-92" aria-hidden="true"></a><span class="dv">74218</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8432</span> <span class="fl">0.125520</span></span>
+<span id="cb36-93"><a href="#cb36-93" aria-hidden="true"></a><span class="dv">75864</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9789</span> <span class="fl">0.140180</span></span>
+<span id="cb36-94"><a href="#cb36-94" aria-hidden="true"></a><span class="dv">75866</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.7676</span> <span class="fl">0.249840</span></span>
+<span id="cb36-95"><a href="#cb36-95" aria-hidden="true"></a><span class="dv">75878</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1729</span> <span class="fl">0.161350</span></span>
+<span id="cb36-96"><a href="#cb36-96" aria-hidden="true"></a><span class="dv">75883</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1389</span> <span class="fl">0.157320</span></span>
+<span id="cb36-97"><a href="#cb36-97" aria-hidden="true"></a><span class="dv">75885</span>  <span class="fl">0.9994</span>    <span class="fl">3.2215</span> <span class="fl">3.7296e-05</span> <span class="fl">1.8061</span> <span class="fl">0.122380</span></span>
+<span id="cb36-98"><a href="#cb36-98" aria-hidden="true"></a><span class="dv">75888</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.4178</span> <span class="fl">0.194010</span></span>
+<span id="cb36-99"><a href="#cb36-99" aria-hidden="true"></a><span class="dv">75890</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.6357</span> <span class="fl">0.227440</span></span>
+<span id="cb36-100"><a href="#cb36-100" aria-hidden="true"></a><span class="dv">75898</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.3120</span> <span class="fl">0.181250</span></span>
+<span id="cb36-101"><a href="#cb36-101" aria-hidden="true"></a><span class="dv">75905</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9456</span> <span class="fl">0.135850</span></span>
+<span id="cb36-102"><a href="#cb36-102" aria-hidden="true"></a><span class="dv">75912</span>  <span class="fl">0.9926</span>    <span class="fl">2.1275</span> <span class="fl">4.0884e-04</span> <span class="fl">1.7759</span> <span class="fl">0.121080</span></span>
+<span id="cb36-103"><a href="#cb36-103" aria-hidden="true"></a><span class="dv">75926</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9559</span> <span class="fl">0.135670</span></span>
+<span id="cb36-104"><a href="#cb36-104" aria-hidden="true"></a><span class="dv">75927</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1450</span> <span class="fl">0.157700</span></span>
+<span id="cb36-105"><a href="#cb36-105" aria-hidden="true"></a><span class="dv">75928</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1193</span> <span class="fl">0.154380</span></span>
+<span id="cb36-106"><a href="#cb36-106" aria-hidden="true"></a><span class="dv">75930</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1279</span> <span class="fl">0.155580</span></span>
+<span id="cb36-107"><a href="#cb36-107" aria-hidden="true"></a><span class="dv">75937</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9697</span> <span class="fl">0.137130</span></span>
+<span id="cb36-108"><a href="#cb36-108" aria-hidden="true"></a><span class="dv">75938</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9587</span> <span class="fl">0.135820</span></span>
+<span id="cb36-109"><a href="#cb36-109" aria-hidden="true"></a><span class="dv">75944</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1021</span> <span class="fl">0.152210</span></span>
+<span id="cb36-110"><a href="#cb36-110" aria-hidden="true"></a><span class="dv">76005</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2737</span> <span class="fl">0.173680</span></span>
+<span id="cb36-111"><a href="#cb36-111" aria-hidden="true"></a><span class="dv">76042</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.4141</span> <span class="fl">0.193430</span></span>
+<span id="cb36-112"><a href="#cb36-112" aria-hidden="true"></a><span class="dv">76057</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8734</span> <span class="fl">0.126780</span></span>
+<span id="cb36-113"><a href="#cb36-113" aria-hidden="true"></a><span class="dv">76066</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.8605</span> <span class="fl">0.125540</span></span>
+<span id="cb36-114"><a href="#cb36-114" aria-hidden="true"></a><span class="dv">77901</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.8892</span> <span class="fl">0.270770</span></span>
+<span id="cb36-115"><a href="#cb36-115" aria-hidden="true"></a><span class="dv">80748</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7523</span> <span class="fl">0.116020</span></span>
+<span id="cb36-116"><a href="#cb36-116" aria-hidden="true"></a><span class="dv">82861</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5742</span> <span class="fl">0.218460</span></span>
+<span id="cb36-117"><a href="#cb36-117" aria-hidden="true"></a><span class="dv">82866</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.4787</span> <span class="fl">0.203660</span></span>
+<span id="cb36-118"><a href="#cb36-118" aria-hidden="true"></a><span class="dv">82964</span>  <span class="fl">0.9906</span>    <span class="fl">2.0227</span> <span class="fl">6.4552e-04</span> <span class="fl">1.6380</span> <span class="fl">0.107080</span></span>
+<span id="cb36-119"><a href="#cb36-119" aria-hidden="true"></a><span class="dv">84287</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1068</span> <span class="fl">0.153700</span></span>
+<span id="cb36-120"><a href="#cb36-120" aria-hidden="true"></a><span class="dv">85403</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">3.4112</span> <span class="fl">0.378160</span></span>
+<span id="cb36-121"><a href="#cb36-121" aria-hidden="true"></a><span class="dv">85513</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7578</span> <span class="fl">0.116680</span></span>
+<span id="cb36-122"><a href="#cb36-122" aria-hidden="true"></a><span class="dv">90464</span>  <span class="fl">0.9896</span>    <span class="fl">1.9783</span> <span class="fl">7.8197e-04</span> <span class="fl">1.4717</span> <span class="fl">0.091847</span></span>
+<span id="cb36-123"><a href="#cb36-123" aria-hidden="true"></a><span class="dv">92350</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9689</span> <span class="fl">0.139440</span></span>
+<span id="cb36-124"><a href="#cb36-124" aria-hidden="true"></a><span class="dv">92465</span>  <span class="fl">0.9928</span>    <span class="fl">2.1394</span> <span class="fl">3.0525e-04</span> <span class="fl">1.6781</span> <span class="fl">0.110270</span></span>
+<span id="cb36-125"><a href="#cb36-125" aria-hidden="true"></a><span class="dv">92826</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.7041</span> <span class="fl">0.111780</span></span>
+<span id="cb36-126"><a href="#cb36-126" aria-hidden="true"></a><span class="dv">93197</span>  <span class="fl">0.9978</span>    <span class="fl">2.6565</span> <span class="fl">1.7234e-04</span> <span class="fl">1.6590</span> <span class="fl">0.107790</span></span>
+<span id="cb36-127"><a href="#cb36-127" aria-hidden="true"></a><span class="dv">93198</span>  <span class="fl">0.9978</span>    <span class="fl">2.6565</span> <span class="fl">1.7234e-04</span> <span class="fl">1.6682</span> <span class="fl">0.108520</span></span>
+<span id="cb36-128"><a href="#cb36-128" aria-hidden="true"></a><span class="dv">93199</span>  <span class="fl">0.9980</span>    <span class="fl">2.6980</span> <span class="fl">1.2443e-04</span> <span class="fl">1.6750</span> <span class="fl">0.109240</span></span>
+<span id="cb36-129"><a href="#cb36-129" aria-hidden="true"></a><span class="dv">93639</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2083</span> <span class="fl">0.171480</span></span>
+<span id="cb36-130"><a href="#cb36-130" aria-hidden="true"></a><span class="dv">93640</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1260</span> <span class="fl">0.160500</span></span>
+<span id="cb36-131"><a href="#cb36-131" aria-hidden="true"></a><span class="dv">94661</span>  <span class="fl">0.9992</span>    <span class="fl">3.0965</span> <span class="fl">5.6210e-05</span> <span class="fl">1.7318</span> <span class="fl">0.114580</span></span>
+<span id="cb36-132"><a href="#cb36-132" aria-hidden="true"></a><span class="dv">96296</span>  <span class="fl">0.9978</span>    <span class="fl">2.6565</span> <span class="fl">1.7234e-04</span> <span class="fl">1.7500</span> <span class="fl">0.116770</span></span>
+<span id="cb36-133"><a href="#cb36-133" aria-hidden="true"></a><span class="dv">97405</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.2977</span> <span class="fl">0.180220</span></span>
+<span id="cb36-134"><a href="#cb36-134" aria-hidden="true"></a><span class="dv">97407</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.3241</span> <span class="fl">0.183260</span></span>
+<span id="cb36-135"><a href="#cb36-135" aria-hidden="true"></a><span class="dv">97998</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0376</span> <span class="fl">0.147430</span></span>
+<span id="cb36-136"><a href="#cb36-136" aria-hidden="true"></a><span class="dv">98445</span>  <span class="fl">0.9984</span>    <span class="fl">2.7951</span> <span class="fl">1.0955e-04</span> <span class="fl">1.5071</span> <span class="fl">0.094143</span></span>
+<span id="cb36-137"><a href="#cb36-137" aria-hidden="true"></a><span class="dv">98528</span>  <span class="fl">0.9896</span>    <span class="fl">1.9783</span> <span class="fl">7.8197e-04</span> <span class="fl">1.6129</span> <span class="fl">0.104540</span></span>
+<span id="cb36-138"><a href="#cb36-138" aria-hidden="true"></a><span class="dv">99021</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.9148</span> <span class="fl">0.133740</span></span>
+<span id="cb36-139"><a href="#cb36-139" aria-hidden="true"></a><span class="dv">99396</span>  <span class="fl">0.9970</span>    <span class="fl">2.5215</span> <span class="fl">2.2862e-04</span> <span class="fl">1.6005</span> <span class="fl">0.102600</span></span>
+<span id="cb36-140"><a href="#cb36-140" aria-hidden="true"></a><span class="dv">99397</span>  <span class="fl">0.9994</span>    <span class="fl">3.2215</span> <span class="fl">3.7296e-05</span> <span class="fl">1.6167</span> <span class="fl">0.103720</span></span>
+<span id="cb36-141"><a href="#cb36-141" aria-hidden="true"></a><span class="dv">99398</span>  <span class="fl">0.9986</span>    <span class="fl">2.8532</span> <span class="fl">8.5501e-05</span> <span class="fl">1.6158</span> <span class="fl">0.103810</span></span>
+<span id="cb36-142"><a href="#cb36-142" aria-hidden="true"></a><span class="dv">99430</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.5618</span> <span class="fl">0.220810</span></span>
+<span id="cb36-143"><a href="#cb36-143" aria-hidden="true"></a><span class="dv">99694</span>  <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.9127</span> <span class="fl">0.274370</span></span>
+<span id="cb36-144"><a href="#cb36-144" aria-hidden="true"></a><span class="dv">103772</span> <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">1.6848</span> <span class="fl">0.109560</span></span>
+<span id="cb36-145"><a href="#cb36-145" aria-hidden="true"></a><span class="dv">105015</span> <span class="fl">0.9996</span>    <span class="fl">3.3977</span> <span class="fl">2.2613e-05</span> <span class="fl">2.4267</span> <span class="fl">0.203410</span></span>
+<span id="cb36-146"><a href="#cb36-146" aria-hidden="true"></a><span class="dv">105025</span> <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1251</span> <span class="fl">0.158070</span></span>
+<span id="cb36-147"><a href="#cb36-147" aria-hidden="true"></a><span class="dv">105030</span> <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.1370</span> <span class="fl">0.159030</span></span>
+<span id="cb36-148"><a href="#cb36-148" aria-hidden="true"></a><span class="dv">106061</span> <span class="fl">1.0000</span> <span class="fl">1000.0000</span> <span class="fl">0.0000e+00</span> <span class="fl">2.0283</span> <span class="fl">0.145150</span></span></code></pre></div>
+<ul>
+<li><p>Some interpretations from this table:</p>
+<ul>
+<li><p>All of these loci have a very probability of being under selection (see column 1)</p></li>
+<li><p>As stated in Bayescan manual, where probability is 1, the log10(PO) is set to 1000</p></li>
+<li><p>The <code>alpha</code> parameter value is positive for all loci indicating diversifying selection</p></li>
+<li><p>The population <code>fst</code> is quite high. What constitutes high fst changes depending upon biology of the species. This data is from poplar trees which are open pollinated and generally have low divergence between populations. If you compare these fsts to those of selectively neutral loci, you will find the latter to be quite low.</p></li>
+</ul></li>
+</ul>
+<p><br><br></p>
+<h3 id="visualize-outliers">4.3 Visualize Outliers</h3>
+<ul>
+<li><p>Bayescan ships with a R script that aids in quickly plotting this data.</p></li>
+<li><p>Get the script from here:</p></li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true"></a><span class="fu">wget</span> https://github.com/wyoibc/popgen_workshop/tree/master/week5/selection/data/plot_R.r</span></code></pre></div>
+<ul>
+<li>Source the script</li>
+</ul>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true"></a><span class="kw">source</span>(<span class="st">&quot;plot_R.r&quot;</span>)</span></code></pre></div>
+<ul>
+<li>Run the plotting function on our test data</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true"></a><span class="kw">plot_bayescan</span>(<span class="st">&quot;test.baye_fst.txt&quot;</span>, <span class="dt">FDR=</span><span class="fl">0.001</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true"></a><span class="op">$</span>outliers</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true"></a>  [<span class="dv">1</span>]   <span class="dv">1566</span>   <span class="dv">1568</span>   <span class="dv">1700</span>   <span class="dv">1702</span>   <span class="dv">3159</span>   <span class="dv">3192</span>   <span class="dv">6013</span>   <span class="dv">6650</span>   <span class="dv">6931</span>  <span class="dv">12697</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true"></a> [<span class="dv">11</span>]  <span class="dv">14156</span>  <span class="dv">14171</span>  <span class="dv">14201</span>  <span class="dv">14954</span>  <span class="dv">18125</span>  <span class="dv">18300</span>  <span class="dv">18322</span>  <span class="dv">18394</span>  <span class="dv">18396</span>  <span class="dv">24167</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true"></a> [<span class="dv">21</span>]  <span class="dv">24395</span>  <span class="dv">26773</span>  <span class="dv">27418</span>  <span class="dv">27423</span>  <span class="dv">31272</span>  <span class="dv">34814</span>  <span class="dv">34830</span>  <span class="dv">36086</span>  <span class="dv">39272</span>  <span class="dv">39876</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true"></a> [<span class="dv">31</span>]  <span class="dv">39889</span>  <span class="dv">39890</span>  <span class="dv">39910</span>  <span class="dv">42021</span>  <span class="dv">42351</span>  <span class="dv">43349</span>  <span class="dv">43516</span>  <span class="dv">43760</span>  <span class="dv">43771</span>  <span class="dv">43775</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true"></a> [<span class="dv">41</span>]  <span class="dv">43778</span>  <span class="dv">45050</span>  <span class="dv">45053</span>  <span class="dv">46669</span>  <span class="dv">46861</span>  <span class="dv">48480</span>  <span class="dv">49162</span>  <span class="dv">50013</span>  <span class="dv">51912</span>  <span class="dv">51917</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true"></a> [<span class="dv">51</span>]  <span class="dv">51920</span>  <span class="dv">51936</span>  <span class="dv">53114</span>  <span class="dv">54009</span>  <span class="dv">54544</span>  <span class="dv">57035</span>  <span class="dv">58556</span>  <span class="dv">58559</span>  <span class="dv">59329</span>  <span class="dv">59877</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true"></a> [<span class="dv">61</span>]  <span class="dv">59878</span>  <span class="dv">61797</span>  <span class="dv">66090</span>  <span class="dv">66817</span>  <span class="dv">70550</span>  <span class="dv">70551</span>  <span class="dv">70553</span>  <span class="dv">70554</span>  <span class="dv">70556</span>  <span class="dv">70557</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true"></a> [<span class="dv">71</span>]  <span class="dv">70561</span>  <span class="dv">70564</span>  <span class="dv">70578</span>  <span class="dv">70606</span>  <span class="dv">70607</span>  <span class="dv">70616</span>  <span class="dv">70617</span>  <span class="dv">70656</span>  <span class="dv">70684</span>  <span class="dv">70738</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true"></a> [<span class="dv">81</span>]  <span class="dv">71234</span>  <span class="dv">71265</span>  <span class="dv">71646</span>  <span class="dv">71734</span>  <span class="dv">71796</span>  <span class="dv">72584</span>  <span class="dv">73227</span>  <span class="dv">74211</span>  <span class="dv">74218</span>  <span class="dv">75864</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true"></a> [<span class="dv">91</span>]  <span class="dv">75866</span>  <span class="dv">75878</span>  <span class="dv">75883</span>  <span class="dv">75885</span>  <span class="dv">75888</span>  <span class="dv">75890</span>  <span class="dv">75898</span>  <span class="dv">75905</span>  <span class="dv">75912</span>  <span class="dv">75926</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true"></a>[<span class="dv">101</span>]  <span class="dv">75927</span>  <span class="dv">75928</span>  <span class="dv">75930</span>  <span class="dv">75937</span>  <span class="dv">75938</span>  <span class="dv">75944</span>  <span class="dv">76005</span>  <span class="dv">76042</span>  <span class="dv">76057</span>  <span class="dv">76066</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true"></a>[<span class="dv">111</span>]  <span class="dv">77901</span>  <span class="dv">80748</span>  <span class="dv">82861</span>  <span class="dv">82866</span>  <span class="dv">82964</span>  <span class="dv">84287</span>  <span class="dv">85403</span>  <span class="dv">85513</span>  <span class="dv">90464</span>  <span class="dv">92350</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true"></a>[<span class="dv">121</span>]  <span class="dv">92465</span>  <span class="dv">92826</span>  <span class="dv">93197</span>  <span class="dv">93198</span>  <span class="dv">93199</span>  <span class="dv">93639</span>  <span class="dv">93640</span>  <span class="dv">94661</span>  <span class="dv">96296</span>  <span class="dv">97405</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true"></a>[<span class="dv">131</span>]  <span class="dv">97407</span>  <span class="dv">97998</span>  <span class="dv">98445</span>  <span class="dv">98528</span>  <span class="dv">99021</span>  <span class="dv">99396</span>  <span class="dv">99397</span>  <span class="dv">99398</span>  <span class="dv">99430</span>  <span class="dv">99694</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true"></a>[<span class="dv">141</span>] <span class="dv">103772</span> <span class="dv">105015</span> <span class="dv">105025</span> <span class="dv">105030</span> <span class="dv">106061</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true"></a></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true"></a><span class="op">$</span>nb_outliers</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true"></a>[<span class="dv">1</span>] <span class="dv">145</span></span></code></pre></div>
+<center>
+<img src="data/test_bayescan.png" width=750 />
+</center>
+<p><br><br></p>
+<h3 id="chromosome-wise-distribution-of-outliers">4.4 Chromosome-Wise Distribution of Outliers</h3>
+<ul>
+<li>Another way of visualizing this data is make a Manhattan plot of all chromosomes. For this, you will need the chromosome number and base pair positions for each of the loci in this data set. Get that data below:</li>
+</ul>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true"></a><span class="fu">wget</span> https://github.com/wyoibc/popgen_workshop/tree/master/week5/selection/data/test_chrpos.baye_fst.txt</span></code></pre></div>
+<ul>
+<li>Import the data into R</li>
+</ul>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true"></a>test2 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;test_chrpos.baye_fst.txt&quot;</span>, <span class="dt">header=</span>T)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true"></a><span class="kw">head</span>(test2)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true"></a>  CHR   POS num       prob    log10PO     qval       alpha      fst</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true"></a><span class="dv">1</span>  <span class="dv">10</span> <span class="dv">25550</span>   <span class="dv">1</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997644</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true"></a><span class="dv">2</span>  <span class="dv">10</span> <span class="dv">25560</span>   <span class="dv">2</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true"></a><span class="dv">3</span>  <span class="dv">10</span> <span class="dv">25567</span>   <span class="dv">3</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true"></a><span class="dv">4</span>  <span class="dv">10</span> <span class="dv">25597</span>   <span class="dv">4</span> <span class="fl">0.00020004</span>    <span class="fl">-3.6988</span> <span class="fl">0.994060</span>  <span class="fl">1.5625e-04</span> <span class="fl">0.022324</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true"></a><span class="dv">5</span>  <span class="dv">10</span> <span class="dv">25600</span>   <span class="dv">5</span> <span class="fl">0.00020004</span>    <span class="fl">-3.6988</span> <span class="fl">0.994060</span> <span class="fl">-5.8927e-05</span> <span class="fl">0.022318</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true"></a><span class="dv">6</span>  <span class="dv">10</span> <span class="dv">25602</span>   <span class="dv">6</span> <span class="fl">0.00000000</span> <span class="fl">-1000.0000</span> <span class="fl">0.997640</span>  <span class="fl">0.0000e+00</span> <span class="fl">0.022319</span></span></code></pre></div>
+<p>Now let’s draw the Manhattan plot</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true"></a><span class="kw">palette</span>(<span class="kw">c</span>(<span class="st">&quot;darkgreen&quot;</span>, <span class="st">&quot;orange&quot;</span>))</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true"></a><span class="kw">pdf</span>(<span class="st">&quot;test_bayescan_mh.pdf&quot;</span>, <span class="dt">width=</span><span class="dv">10</span>, <span class="dt">height=</span><span class="dv">8</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">107309</span>), <span class="op">-</span><span class="kw">log10</span>(test2<span class="op">$</span>qval), <span class="dt">col=</span>test2<span class="op">$</span>CHR, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">cex=</span><span class="fl">0.5</span>, <span class="dt">xlab=</span><span class="st">&quot;Chromosomes&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;-log10(qval)&quot;</span>, <span class="dt">xaxt=</span><span class="st">&#39;n&#39;</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true"></a><span class="kw">dev.off</span>()</span></code></pre></div>
+<center>
+<img src="data/test_bayescan_mh.png" width=750 />
+</center>
+<ul>
+<li>Notice that the chromosomes are not being ordered correctly in this plot. We will quickly fix that.</li>
+</ul>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true"></a>test2_order &lt;-<span class="st"> </span>test2[<span class="kw">order</span>(test2<span class="op">$</span>CHR),]</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true"></a><span class="kw">palette</span>(<span class="kw">c</span>(<span class="st">&quot;darkgreen&quot;</span>, <span class="st">&quot;orange&quot;</span>))</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true"></a><span class="kw">pdf</span>(<span class="st">&quot;test_bayescan_mh_ordered.pdf&quot;</span>, <span class="dt">width=</span><span class="dv">10</span>, <span class="dt">height=</span><span class="dv">8</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true"></a><span class="kw">plot</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">107309</span>), <span class="op">-</span><span class="kw">log10</span>(test2_order<span class="op">$</span>qval), <span class="dt">col=</span>test2_order<span class="op">$</span>CHR, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">cex=</span><span class="fl">0.5</span>, <span class="dt">xlab=</span><span class="st">&quot;Chromosomes&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;-log10(qval)&quot;</span>, <span class="dt">xaxt=</span><span class="st">&#39;n&#39;</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true"></a><span class="kw">dev.off</span>()</span></code></pre></div>
+<center>
+<img src="data/test_bayescan_mh_ordered.png" width=750 />
+</center>
 </body>
 </html>
