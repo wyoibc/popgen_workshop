@@ -456,6 +456,96 @@ sbatch run_bayescan.sh
 
 ```
 
+<br><br>
 
 
+## 3. Understanding Bayescan Output
 
+Bayescan outputs several files depending upon parameters selected during the run. You will see the following files in the results folder:
+
+
+```bash
+cd ruber_output
+
+ls -lh
+
+-rw-rw-r-- 1 vchhatre 380K Dec  2 14:38 ruber.baye_Verif.txt
+-rw-rw-r-- 1 vchhatre  601 Dec  2 15:17 ruber.baye_AccRte.txt
+-rw-rw-r-- 1 vchhatre 252K Dec  2 15:17 ruber.baye.sel
+-rw-rw-r-- 1 vchhatre 228K Dec  2 19:16 ruber.baye_fst.txt
+```
+
+- Among these files, the one ending in ``.baye_fst.txt`` has most of the results for selection scan.  Let's take a look.
+
+```bash
+vim ruber.baye_fst.txt
+```
+
+- Add a name for the first column. Call it loci.
+
+- Then replace multiple spaces between columns by a single tab
+
+```bash
+:%s/\s\+/ /g
+:%s/ /\t/g
+:wq
+```
+
+- Import the file into R
+
+```bash
+module load gcc swset r
+
+R
+```
+
+```r
+bscan <- read.table("ruber.baye_fst.txt", header=T)
+
+head(bscan)
+
+  locus       prob log10.PO.     qval       alpha     fst
+1     1 0.00080016  -3.09648 0.998716 -0.00014427 0.32671
+2     2 0.00080016  -3.09650 0.998720 -0.00025595 0.32669
+3     3 0.00100020  -2.99950 0.998560 -0.00021504 0.32671
+4     4 0.00080016  -3.09650 0.998720 -0.00038205 0.32668
+5     5 0.00060012  -3.22150 0.998840 -0.00012257 0.32671
+6     6 0.00060012  -3.22150 0.998840  0.00085670 0.32693
+```
+
+Here:
+	- ``prob`` is the posterior probability of selection acting on a locus
+	- ``log10.PO.`` is the log10 of the posterior odds of the model testing for selection. The value in this column is set to 1000 when the posterior probability is ``1``.
+	- ``alpha`` is a coefficient indicating the strength and direction of selection. Positive values indicate diversifying selection and negative values, purifying selection.
+	- ``qval`` is the multiple testing p-value obtained after testing each locus for selection. 
+
+
+- Essentially, if a locus is determined to be candidate for selection, it's ``qvalue`` should be very small. Let's check the range of these values.
+
+
+```r
+range(bscan$qval)
+
+[1] 0.90958 0.99897
+```
+
+- This indicates that there are no loci that can be considered candidates for selection.  
+
+- It's possible that the prior odds we set (``pr_odds=1000``) is too small. Maybe we should increase those odds by an order of magnitude (say 100). We can rerun the analysis by making two small changes to the script:
+
+```bash
+vim run_bayescan.sh
+```
+
+```bash
+-pr_odds 100
+-od ruber_output_prior100
+```
+
+```bash
+mkdir ruber_output_prior100
+
+sbatch run_bayescan.sh
+```
+
+- After the run finishes, check the results to see if any loci are candidates for selection.
