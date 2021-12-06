@@ -57,7 +57,7 @@ You should now have an empty Github repository. We'll use Git on teton to add th
 ## 2. Git on Teton
 
 
-We have organized our files **terribly** throughout this workshop. A much better sytem would have been to plan ahead (you should always do this with your own data and code) and create a directory that creates our various scripts, a directory that contains data, and a directory that contains figures and other output. We could have subdirectories within each of these or some modification of this, but minimally, separating out the data from everything else is very useful. Unfortunately, moving around among these directories as a group gets tricky when we all have different paths, as on Teton.
+We have organized our files **terribly** throughout this workshop. A much better sytem would have been to plan ahead (you should always do this with your own data and code) and create a directory for our various scripts, a directory that contains data, and a directory that contains figures and other output. We could have subdirectories within each of these or some modification of this, but minimally, separating out the data from everything else is very useful. Unfortunately, moving around among these directories as a group gets tricky when we all have different paths, as on Teton.
 
 For now, since we all have various files and data strewn all over, let's get on the same page by adding yet another directory of files to the mix. Let's all copy over a set of files to work with to wherever you are working from on Teton and then change into this directory:
 
@@ -87,7 +87,7 @@ author: Sean Harrington
 date: December 3, 2021
 ---
 
-This repo contains scripts used to analyze RADseq data for the red diamond rattlesnake, Crotalus ru$
+This repo contains scripts used to analyze RADseq data for the red diamond rattlesnake, Crotalus ruber
 
 <center>
 <img src="ruber.png">
@@ -124,41 +124,61 @@ The `-m` argument specifies the message that accompanies the commit, and can be 
 We're now ready to push our repository to Github, but first we need to do some configuration to set this up. 
 
 
-
-
-
-
-
-
 We need to start by generating an ssh key pair that will allow our computer (or Teton in this case) to securely interact with Github. To create the ssh key pair, run the following, substituting your own email address.
 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "YOUR_USERNAME@uwyo.edu"
 ```
 
-This should then ask you what file you want to save this as. I'm saving mine as `/home/sharrin2/.ssh/github_key` - change my directory to yours.
+This should then ask you what file you want to save this as. I'm saving mine as `/home/YOURUSERNAME/.ssh/github_key` - edit this to include your username.
 
 Then it will ask you for a passphrase, which you can leave empty by just hitting enter both times when prompted. I'm not using a passphrase here, but you can if you want, just make sure to remember it, as you'll be asked for it when you use the key.
 
-Now we need to go copy the public key so that we can associate it with out Github account. I use `less /home/sharrin2/.ssh/github_key.pub` to look at the key and copy it (`q` quits less). Make sure you're copying the **public key**, ending in .pub, not the private key.
+Now we need to go copy the public key so that we can associate it with out Github account. I use `less /home/YOURUSERNAME/.ssh/github_key.pub` to look at the key and copy it (`q` quits less). Make sure you're copying the **public key**, ending in .pub, not the private key.
+
+
+On Github, in the top right, go to `Settings`
+
+<center>
+<img src="github_settings.png" width=500 />
+</center>
+
+then in account settings, select `SSH and GPG keys`
+
+
+<center>
+<img src="ssh_key.png" width=500 />
+</center>
+
+
+and then click on `New SSH key`
+
+
+<center>
+<img src="new_key.png" width=500 />
+</center>
+
+Copy your public key into the `key` box and give it a title, then click `Add SSH key`. The key is now added to Github.
+
+
 
 Now we have to configure our system (Teton here) to use the ssh keys.
 
 ```bash
-ssh-add /home/sharrin2/.ssh/github_key # add the key
+ssh-add /home/YOURUSERNAME/.ssh/github_key # add the key
 ssh-add -l # make sure the key is being used
 ```
 
 The key should be listed after running that second command.
 
 
-Now we can create a config file (or edit it, if it already exists) to complete the setup.
+Now we can create a config file in our .ssh directory (or edit it, if it already exists) to complete the setup.
 
 ```bash
-nano config
+nano /home/YOURUSERNAME/.ssh/config
 ```
 
-add the following to the file (again changing my paths to your own), then save and close it:
+add the following to the file (**edited for your own usernames**), then save and close it:
 
 
 
@@ -168,11 +188,11 @@ Host *
    IgnoreUnknown AddKeysToAgent,UseKeychain
    UseKeychain yes
 
-Host seanharrington256.github.com
+Host YOURGITHUBUSERNAME.github.com
         HostName github.com
         User git
         PreferredAuthentications publickey
-        IdentityFile /home/sharrin2/.ssh/github_key
+        IdentityFile /home/YOURUSERNAME/.ssh/github_key
 ```
 
 We also need to change the permissions on this file.
@@ -182,33 +202,28 @@ chmod 600 ~/.ssh/config
 ```
 
 
-Now we just need to change the config file in our github repository. Go to your popgen directory that we made earlier:
+Now we just need to associate the remote Github repository with this local (Teton) repository. If you are not already in your `popgen` directory that we made earlier, navigate back to it now:
 
 ```bash
 cd /Your/Path/to/popgen
 ```
 
-then go into the hidden `.git` directory and edit the config file
+Then configure the repository with your information:
 
 ```bash
-cd .git
-nano config
+git config user.name "YOUR_GITHUB_USER_NAME"
+git config user.email "YOUR_GITHUB_EMAIL_ADDRESS"
+
+git config --list
+
+git remote add origin git@github.com:YOUR_GITHUB_USERNAME/popgen.git
 ```
 
-and edit the url in `remote "origin"` to the following, substituting your username:
+You should now be ready to push to the remote repository.
 
 ```bash
-url = git@github.com:YOUR_USERNAME/popgen.git
+git push -u origin master
 ```
-
-We should now be fully configured to push our repository to Github.
-
-```bash
-git push
-```
-This first time, you will likely need to use `git push --set-upstream origin master`, but afterwards, you can push new changes using simply `git push`.
-
-
 
 
 If that ran successfully, you should be able to use a browser to go look at your repository on Github and see that it contains the content in our local repository on Teton, with the readme file displayed below the list of files.
