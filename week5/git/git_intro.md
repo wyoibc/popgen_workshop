@@ -123,6 +123,8 @@ The `-m` argument specifies the message that accompanies the commit, and can be 
 
 We're now ready to push our repository to Github, but first we need to do some configuration to set this up. 
 
+If you are working on Teton, the first step is to make sure that you own your `~/.ssh` directory, if you do not, you will need to email ARCC (arcc-info@uwyo.edu) and have them transfer ownership of that directory to you. You can check the ownership by running `ls -ld ~/.ssh`. You should see a series of letters and a number followed by your username twice if you own the directory or followed by `root` twice if the directory is owned by root. If you own the directory, we're good to continue on.
+
 
 We need to start by generating an ssh key pair that will allow our computer (or Teton in this case) to securely interact with Github. To create the ssh key pair, run the following, substituting your own email address.
 
@@ -170,6 +172,13 @@ ssh-add -l # make sure the key is being used
 ```
 
 The key should be listed after running that second command.
+
+If the former commands do not work and you get an error like `could not open a connection to your authentication agent`, it most likely means that the ssh-agent is not running. In that case, run 
+
+```
+eval `ssh-agent`   # only necessary if the previous commands did not work
+```
+
 
 
 Now we can create a config file in our .ssh directory (or edit it, if it already exists) to complete the setup.
